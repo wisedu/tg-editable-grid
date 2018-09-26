@@ -5,12 +5,13 @@ var prototype = Textfield.parent('CellEditor').prototype;
 
 let calendar;
 var Date = Textfield.extend('Datetime', {
-    initialize: function(grid) {
-        var localizerName = 'date';
-        this.template = 
-`<div class="hypergrid-combobox" title="">
+    template:  `<div class="hypergrid-combobox" title="">
     <input type="text" lang="{{locale}}" style="{{style}}">
-</div>`;
+    <span title="Click for datepicker"></span>
+</div>`,
+    initialize: function(grid) {
+        var el = this.el;
+        this.input = el.querySelector('input');
         this.selectAll = function() {
             var lastCharPlusOne = this.getEditorValue().length;
             this.input.setSelectionRange(0, lastCharPlusOne);

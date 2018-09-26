@@ -3,9 +3,11 @@ import ComboBox from "./editors/ComboBox.js";
 import Datetime from "./editors/Datetime.js";
 import Tree from "./editors/Tree.js";
 import excel from './excel.js';
+import utils from './utils.js';
 
 export default class TG_EDITABLE_GRID {
     constructor(dom, options){
+        this.utils = utils;
         Hypergrid.registerTheme(excel);
         
         this.grid = new Hypergrid(dom, options);

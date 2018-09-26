@@ -14,17 +14,14 @@
     let data = await result.json();
     
     inst.setData(data, [
-        { code: 'SZDWDM', header: 'SZ单位', name:"SZDWDM_DISPLAY", editor:"comboBox", loaddata: async function(value, optgroup, callback) {
-            let result = await fetch('./static/SZDW.json', {
+        { code: 'SZDWDM', header: 'SZ单位', name:"SZDWDM_DISPLAY", editor:"tree", loaddata: async function(value, callback) {
+            let result = await fetch('./static/tree.json', {
                 headers: new Headers({
                 'Content-Type': 'application/json'
             })});
             let emapdatas = await result.json();
-            emapdatas.datas.code.rows.map(item => {
-                var option = new Option(item.name, item.id);
-                optgroup.appendChild(option);
-            })
-            callback();
+            let datas = inst.utils.toTreeData(emapdatas.datas.code.rows, "", {ukey:"id", pkey:'pId', toCKey:'children'})
+            callback(datas);
         }},
         { name: 'SZDWDM', header: 'SZDWDM', editor:"textfield" },
         { name: 'CZRQ', header: '操作日期', editor:"datetime" },
@@ -35,11 +32,7 @@
                 'Content-Type': 'application/json'
             })});
             let emapdatas = await result.json();
-            emapdatas.datas.code.rows.map(item => {
-                var option = new Option(item.name, item.id);
-                optgroup.appendChild(option);
-            })
-            callback();
+            callback(emapdatas.datas.code.rows);
         }}
     ]);
     

@@ -73,12 +73,12 @@ div.hypergrid-combobox > div {
     -moz-user-select: none;
     -ms-user-select: none;
 }
-div.hypergrid-combobox > div > div {
+/* div.hypergrid-combobox > div > div {
     position: absolute;
     height: 13px;
     width: 100%;
     text-align: center;
-}
+} */
 div.hypergrid-combobox > div span[title] {
     font-weight: bold;
     font-size: 12px;
@@ -90,8 +90,10 @@ div.hypergrid-combobox > div span:not([title]) {
     font-style: italic;
     padding-top: 1px;
 }
-div.hypergrid-combobox > div select {
-    position: absolute;
+div.hypergrid-combobox > div #dataContainer {
+    /* position: absolute; */
+    text-align: left;
+    overflow: scroll;
     padding-top: 2px;
     border: 0;
     outline: 0;
@@ -102,11 +104,9 @@ div.hypergrid-combobox > div select {
     left: 0;
     right: 0;
     background-color: transparent;
-    font-family: sans-serif;
-    font-weight: bold;
     font-size: 9px;
 }
-div.hypergrid-combobox > div select option:hover {
+div.hypergrid-combobox > div #dataContainer option:hover {
     background-color: #777;
     color: ivory;
 }

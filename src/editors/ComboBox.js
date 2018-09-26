@@ -33,7 +33,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         this.input = el.querySelector('input');
         this.dropper = el.querySelector('span');
         this.options = el.querySelector('div');
-        this.controls = this.options.querySelector('div');
+        // this.controls = this.options.querySelector('div');
         this.dropdown = this.options.querySelector('select');
 
         this.controllable = this.modes.length > 1;
@@ -54,8 +54,7 @@ var ComboBox = Textfield.extend('ComboBox', {
 '    <input type="text" lang="{{locale}}" style="{{style}}">',
 '    <span title="Click for options"></span>',
 '    <div>',
-'        <div></div>',
-'        <select size="15" lang="{{locale}}"></select>',
+'        <select id="dataContainer" size="15" lang="{{locale}}"></select>',
 '    </div>',
 '</div>'
     ].join('\n'),
@@ -132,9 +131,9 @@ var ComboBox = Textfield.extend('ComboBox', {
             });
 
             // wire-ups
-            if (this.controllable) {
-                this.controls.addEventListener('click', onModeIconClick.bind(this));
-            }
+            // if (this.controllable) {
+            //     this.controls.addEventListener('click', onModeIconClick.bind(this));
+            // }
 
             this.modes.forEach(function(mode) {
                 // create a toggle
@@ -148,7 +147,7 @@ var ComboBox = Textfield.extend('ComboBox', {
                     toggle.textContent = mode.symbol;
                 }
 
-                this.controls.appendChild(toggle);
+                // this.controls.appendChild(toggle);
 
                 // create and label a new optgroup
                 if (mode.selector) {
@@ -171,17 +170,35 @@ var ComboBox = Textfield.extend('ComboBox', {
     hideEditor: function() {
         // this is where you would persist this.menuModes
         prototype.hideEditor.call(this);
+        if (this.dropdown.value !== this.initialValue) {
+            this.grid.behavior.dataModel.data[this.event.dataCell.y][this.column.schema.code] = this.dropdown.value;
+        }
     },
+    cancelEditing: function() {
+        this.dropdown.value = this.initialValue;
+        this.setEditorValue(this.initialValue);
+        this.hideEditor();
+        this.grid.cellEditor = null;
+        this.el.remove();
+        this.grid.takeFocus();
 
+        return true;
+    },
     toggleDropDown: function() {
         let that = this;
-        function callback(){
+        let optgroup = this.dropdown;
+
+        function callback(datas){
+            datas.map(item => {
+                var option = new Option(item.name, item.id);
+                optgroup.appendChild(option);
+            })
             if (!that.optionsTransition.transitioning) {
                 var state = window.getComputedStyle(that.dropdown).visibility;
                 stateToActionMap[state].call(that);
             }
         }
-        let optgroup = this.dropdown;
+        
         let loaddata = this.column.schema.loaddata;
         if (loaddata !== undefined) {
             loaddata(this.input.value, optgroup, callback)
@@ -194,8 +211,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         // replace the input text with the drop-down text
         this.input.focus();
         this.input.value = this.dropdown[this.dropdown.selectedIndex].label;
-        this.grid.behavior.dataModel.data[this.event.dataCell.y][this.column.schema.code] = this.dropdown.value;
-
+        
         this.input.setSelectionRange(0, this.input.value.length);
 
         // close the drop-down
@@ -285,7 +301,7 @@ function slideDown() {
     var dropDownTopMargin = getFloat(this.dropdown, 'marginTop'),
         dropDownRows = this.dropdown.size,
         optionHeight = Math.ceil((this.dropdown.length && getFloat(this.dropdown[0], 'height') || 13.1875) * 2) / 2 + 1;
-    this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 'px'; // starts the slide down effect
+    this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 5 + 'px'; // starts the slide down effect
 
     // while in drop-down, listen for clicks in text box which means abprt
     this.input.addEventListener('mousedown', this.slideUpBound = slideUp.bind(this));
