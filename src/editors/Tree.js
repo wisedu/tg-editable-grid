@@ -83,7 +83,7 @@ var Date = Textfield.extend('Tree', {
         }
         let loaddata = this.column.schema.loaddata;
         if (loaddata !== undefined) {
-            loaddata(this.input.value, callback)
+            loaddata(this.column.schema, this.input.value, callback)
         } else {
             callback();
         }

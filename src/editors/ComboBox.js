@@ -190,7 +190,7 @@ var ComboBox = Textfield.extend('ComboBox', {
 
         function callback(datas){
             datas.map(item => {
-                var option = new Option(item.name, item.id);
+                var option = new Option(item.label, item.value);
                 optgroup.appendChild(option);
             })
             if (!that.optionsTransition.transitioning) {
@@ -201,7 +201,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         
         let loaddata = this.column.schema.loaddata;
         if (loaddata !== undefined) {
-            loaddata(this.input.value, optgroup, callback)
+            loaddata(this.column.schema, this.input.value, callback)
         } else {
             callback();
         }
