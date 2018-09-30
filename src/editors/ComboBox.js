@@ -174,6 +174,15 @@ var ComboBox = Textfield.extend('ComboBox', {
             this.grid.behavior.dataModel.data[this.event.dataCell.y][this.column.schema.code] = this.dropdown.value;
         }
     },
+    setBounds: function(cellBounds) {
+        var style = this.el.style;
+
+        style.left = px(cellBounds.x);
+        style.top = px(cellBounds.y);
+        style.width = px(cellBounds.width - 20);
+        style.height = px(cellBounds.height - 20);
+    },
+
     cancelEditing: function() {
         this.dropdown.value = this.initialValue;
         this.setEditorValue(this.initialValue);
@@ -188,9 +197,18 @@ var ComboBox = Textfield.extend('ComboBox', {
         let that = this;
         let optgroup = this.dropdown;
 
+        while (optgroup.firstElementChild) {
+            optgroup.firstElementChild.remove();
+        }
+
         function callback(datas){
             datas.map(item => {
-                var option = new Option(item.label, item.value);
+                var option;
+                if (typeof(item) === "string") {
+                    option = new Option(item, item);
+                } else {
+                    option = new Option(item.label, item.value);
+                }
                 optgroup.appendChild(option);
             })
             if (!that.optionsTransition.transitioning) {
@@ -326,6 +344,7 @@ function slideUp() {
 function getFloat(el, style) {
     return parseFloat(window.getComputedStyle(el)[style]);
 }
+function px(n) { return n + 'px'; }
 
 
 export default ComboBox;

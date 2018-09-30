@@ -2,42 +2,44 @@ import Hypergrid from 'fin-hypergrid';
 import ComboBox from "./editors/ComboBox.js";
 import Datetime from "./editors/Datetime.js";
 import Tree from "./editors/Tree.js";
-import excel from './excel.js';
+import Text from "./editors/Text.js";
+import wisTable from './wisTableTheme.js';
 import utils from './utils.js';
 
 export default class TG_EDITABLE_GRID {
     constructor(dom, options){
         this.displayFieldFormat = options.displayFieldFormat;
         this.utils = utils;
-        Hypergrid.registerTheme(excel);
-        
+        Hypergrid.registerTheme(wisTable);
+        Hypergrid.applyTheme('wisTable');
         this.grid = new Hypergrid(dom, options);
+        // cellCursor
         this.grid.properties.hoverCellHighlight = {
-            enabled: true,
-            backgroundColor: 'rgba(255,255,255)'
+            enabled: false,
+            backgroundColor: "rgb(239,246,254)"
         }
         this.grid.properties.hoverRowHighlight = {
-            enabled: false
+            enabled: false,
+            backgroundColor: 'rgba(239,246,254)'
         }
         this.grid.properties.hoverColumnHighlight = {
             enabled: false
         }
+        this.grid.properties.columnAutosizing = false;
         this.grid.properties.editOnDoubleClick = false;
         // this.grid.properties.multipleSelections = true;
-        // this.grid.properties.singleRowSelectionMode = false;
+        // this.grid.properties.singleRowSelectionMode = true;
         this.grid.localization.date = new Intl.DateTimeFormat("zh-Hans-CN", options);
 
         this.grid.cellEditors.add(Datetime);
         this.grid.cellEditors.add(ComboBox);
         this.grid.cellEditors.add(Tree);
-        this.grid.addEventListener('fin-editor-data-change', function(val){
-            console.log(val, "~~~");
-        })
-
-        Hypergrid.applyTheme('excel');
+        this.grid.cellEditors.add(Text);
+        // this.grid.addEventListener('fin-editor-data-change', function(val){
+        //     console.log(val, "~~~");
+        // })
     }
-
-    setData(data, schema) {
+    setSchema(schema) {
         let that = this;
         let newSchema = [];
         schema.map(field => {
@@ -58,14 +60,17 @@ export default class TG_EDITABLE_GRID {
                 case "tree":
                     newField.loaddata = that.onEditorLoadData
                     break;
+                case "text":
+                    newField.editor = "text"
+                    break;
                 case "date-local":
                     newField.editor = "datetime"
                     break;
             }
             newSchema.push(newField);
-        })
-
-        this.grid.setData({data: data, schema: newSchema});
+        });
+        this.grid.setBehavior();
+        this.grid.behavior.dataModel.setSchema(newSchema);
         this.grid.getCellEditorAt = function(row) {
             return this.cellEditors.create(row.column.schema.editor, row);
         }
@@ -73,7 +78,32 @@ export default class TG_EDITABLE_GRID {
         this.grid.getCell = function(config, rendererName) {
             return grid.cellRenderers.get(rendererName);
         };
-   
+
+        this.grid.mixIn.call(this.grid.behavior.featureMap.OnHover, {
+            handleMouseMove:function(grid, event) {
+
+                if (event.isDataCell) {
+                    this.cursor = 'cell';
+                } else {
+                    this.cursor = null;
+                }
+
+                var hoverCell = grid.hoverCell;
+                if (!event.gridCell.equals(hoverCell)) {
+                    if (hoverCell) {
+                        this.handleMouseExit(grid, hoverCell);
+                    }
+                    this.handleMouseEnter(grid, event);
+                    grid.setHoverCell(event);
+                } else if (this.next) {
+                    this.next.handleMouseMove(grid, event);
+                }
+            }
+        })
+    }
+
+    setData(data) {
+        this.grid.setData({data: data});
     }
 
     onEditorLoadData(model, value, callback) {

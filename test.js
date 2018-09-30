@@ -8,6 +8,13 @@
     inst.onEditorLoadData = function(schmea, value, callback) {
         
     }
+    inst.setSchema([
+        { name:"SZDWDM_DISPLAY", caption: 'SZ单位', xtype:"tree"},
+        { name: 'SZDWDM', caption: 'SZDWDM', xtype:"text" },
+        { name: 'CZRQ', caption: '操作日期', xtype:"datetime" },
+        { name: 'WID', caption: 'WID', xtype:"text" },
+        { code: 'ZZMMDM', caption: '政治面貌', name:"ZZMMDM_DISPLAY", xtype:"select"}
+    ]);
     
     let result = await fetch('./static/hrdata.js', {
         headers: new Headers({
@@ -16,13 +23,7 @@
     
     let data = await result.json();
     
-    inst.setData(data, [
-        { name:"SZDWDM_DISPLAY", caption: 'SZ单位', xtype:"tree"},
-        { name: 'SZDWDM', caption: 'SZDWDM', xtype:"textfield" },
-        { name: 'CZRQ', caption: '操作日期', xtype:"datetime" },
-        { name: 'WID', caption: 'WID', xtype:"textfield" },
-        { code: 'ZZMMDM', caption: '政治面貌', name:"ZZMMDM_DISPLAY", xtype:"comboBox"}
-    ]);
+    inst.setData(data);
     
     document.getElementById("addrow").addEventListener("click", function(e){
         inst.getData().push({SZDWDM:"",SZDWDM_DISPLAY:"",CZRQ:"",WID:"",ZZMMDM:""});
