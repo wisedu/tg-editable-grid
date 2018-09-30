@@ -170,8 +170,14 @@ var ComboBox = Textfield.extend('ComboBox', {
     hideEditor: function() {
         // this is where you would persist this.menuModes
         prototype.hideEditor.call(this);
-        if (this.dropdown.value !== this.initialValue) {
-            this.grid.behavior.dataModel.data[this.event.dataCell.y][this.column.schema.code] = this.dropdown.value;
+        if (this.input.value !== this.initialValue) {
+            let selectValue = "";
+            for (let i = 0; i < this.dropdown.options.length; i++){
+                if (this.dropdown.options[i].text === this.input.value) {
+                    selectValue = this.dropdown.options[i].value;
+                }
+            }
+            this.grid.behavior.dataModel.data[this.event.dataCell.y][this.column.schema.code] = selectValue;
         }
     },
     setBounds: function(cellBounds) {
@@ -184,7 +190,7 @@ var ComboBox = Textfield.extend('ComboBox', {
     },
 
     cancelEditing: function() {
-        this.dropdown.value = this.initialValue;
+        this.input.value = this.initialValue;
         this.setEditorValue(this.initialValue);
         this.hideEditor();
         this.grid.cellEditor = null;
