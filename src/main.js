@@ -3,6 +3,8 @@ import ComboBox from "./editors/ComboBox.js";
 import Datetime from "./editors/Datetime.js";
 import Tree from "./editors/Tree.js";
 import Text from "./editors/Text.js";
+
+import renderCheckbox from "./renderers/Checkbox.js";
 import wisTable from './wisTableTheme.js';
 import utils from './utils.js';
 
@@ -35,6 +37,8 @@ export default class TG_EDITABLE_GRID {
         this.grid.cellEditors.add(ComboBox);
         this.grid.cellEditors.add(Tree);
         this.grid.cellEditors.add(Text);
+
+        this.grid.cellRenderers.add("Checkbox", renderCheckbox);
         // this.grid.addEventListener('fin-editor-data-change', function(val){
         //     console.log(val, "~~~");
         // })
@@ -66,6 +70,8 @@ export default class TG_EDITABLE_GRID {
                 case "date-local":
                     newField.editor = "datetime"
                     break;
+                case "switcher":
+                    newField.render = "switcher"
             }
             newSchema.push(newField);
         });
@@ -75,8 +81,12 @@ export default class TG_EDITABLE_GRID {
             return this.cellEditors.create(row.column.schema.editor, row);
         }
 
-        this.grid.getCell = function(config, rendererName) {
-            return grid.cellRenderers.get(rendererName);
+        this.grid.behavior.dataModel.getCell = function(config, rendererName) {
+            if (config.columns[config.field] !== undefined && config.columns[config.field].render === "switcher") {
+                return this.grid.cellRenderers.get("Checkbox");
+            } else {
+                return this.grid.cellRenderers.get(rendererName);
+            }
         };
 
         this.grid.mixIn.call(this.grid.behavior.featureMap.OnHover, {

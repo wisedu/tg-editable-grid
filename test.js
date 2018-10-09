@@ -13,6 +13,7 @@
         { name: 'SZDWDM', caption: 'SZDWDM', xtype:"text" },
         { name: 'CZRQ', caption: '操作日期', xtype:"datetime" },
         { name: 'WID', caption: 'WID', xtype:"text" },
+        { name: 'SFCYLK', caption: 'SFCYLK', xtype:"switcher" },
         { code: 'ZZMMDM', caption: '政治面貌', name:"ZZMMDM_DISPLAY", xtype:"select"}
     ]);
     
