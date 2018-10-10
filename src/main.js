@@ -5,6 +5,7 @@ import Tree from "./editors/Tree.js";
 import Text from "./editors/Text.js";
 
 import renderCheckbox from "./renderers/Checkbox.js";
+import renderBorders from "./renderers/Borders.js";
 import wisTable from './wisTableTheme.js';
 import utils from './utils.js';
 
@@ -27,7 +28,8 @@ export default class TG_EDITABLE_GRID {
         this.grid.properties.hoverColumnHighlight = {
             enabled: false
         }
-        this.grid.properties.columnAutosizing = false;
+        this.grid.properties.gridBorder = true;
+        // this.grid.properties.columnAutosizing = false;
         this.grid.properties.editOnDoubleClick = false;
         // this.grid.properties.multipleSelections = true;
         // this.grid.properties.singleRowSelectionMode = true;
@@ -39,6 +41,7 @@ export default class TG_EDITABLE_GRID {
         this.grid.cellEditors.add(Text);
 
         this.grid.cellRenderers.add("Checkbox", renderCheckbox);
+        this.grid.cellRenderers.add("Borders", renderBorders);
         // this.grid.addEventListener('fin-editor-data-change', function(val){
         //     console.log(val, "~~~");
         // })
@@ -47,10 +50,9 @@ export default class TG_EDITABLE_GRID {
         let that = this;
         let newSchema = [];
         schema.map(field => {
-            let newField = field;
+            let newField = Object.assign({}, field);
             newField.header = newField.caption;
             newField.editor = newField.xtype;
-            delete newField.caption;
 
             if (this.displayFieldFormat !== "" && newField.name.endsWith(this.displayFieldFormat) > -1) {
                 let code_name = newField.name.replace(this.displayFieldFormat, "");

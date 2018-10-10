@@ -25,6 +25,20 @@
     let data = await result.json();
     
     inst.setData(data);
+
+    inst.grid.addProperties({
+        renderer:['SimpleCell', 'Borders'],
+        cells: {
+            data: {
+                1: { // row index
+                    WID: { borderLeft: "red", borderTop: "red", borderBottom: "red", borderRight: "red" }
+                },
+                2: { // row index
+                    WID: { borderLeft: "red", borderTop: "red", borderBottom: "red", borderRight: "red" }
+                }
+            }
+        }
+    });
     
     document.getElementById("addrow").addEventListener("click", function(e){
         inst.getData().push({SZDWDM:"",SZDWDM_DISPLAY:"",CZRQ:"",WID:"",ZZMMDM:""});
