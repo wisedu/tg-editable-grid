@@ -28,8 +28,8 @@ export default class TG_EDITABLE_GRID {
         this.grid.properties.hoverColumnHighlight = {
             enabled: false
         }
-        this.grid.properties.gridBorder = true;
-        // this.grid.properties.columnAutosizing = false;
+        // this.grid.properties.gridBorder = true;
+        this.grid.properties.columnAutosizing = options.columnAutosizing || false;
         this.grid.properties.editOnDoubleClick = false;
         // this.grid.properties.multipleSelections = true;
         // this.grid.properties.singleRowSelectionMode = true;
@@ -79,6 +79,26 @@ export default class TG_EDITABLE_GRID {
         });
         this.grid.setBehavior();
         this.grid.behavior.dataModel.setSchema(newSchema);
+
+        let rowheaderWidth = 80;//this.grid.behavior.getColumnWidth(-2);//初始化时宽度默认是100
+
+        if (this.grid.properties.columnAutosizing === true) {
+            let sumWidth = 0;
+            for (let index = 0; index < newSchema.length; index++) {
+                let width = this.grid.behavior.getColumnWidth(index);
+                sumWidth += width;
+            }
+            
+            let lastWidth = this.grid.behavior.getColumnWidth(newSchema.length - 1);
+            let newLastWidth = lastWidth + this.grid.getBounds().width - sumWidth - rowheaderWidth;
+            this.grid.behavior.setColumnWidth(newSchema.length - 1, newLastWidth);
+        } else {
+            let avgWidth = (this.grid.getBounds().width - rowheaderWidth) / newSchema.length
+            for (let index = 0; index < newSchema.length; index++) {
+                this.grid.behavior.setColumnWidth(index, avgWidth);
+            }
+        }
+
         this.grid.getCellEditorAt = function(row) {
             return this.cellEditors.create(row.column.schema.editor, row);
         }
