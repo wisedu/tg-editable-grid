@@ -45,6 +45,17 @@ let Borders = CellRenderer.extend('Borders', {
             gc.stroke();
         }
 
+        if (color) {
+            gc.beginPath();
+            gc.moveTo(x + w, y);
+            gc.lineTo(x + w, y + 12);
+            gc.lineTo(x + w - 12, y);
+            // gc.lineTo(x, y);
+            gc.closePath();
+            gc.cache.fillStyle = color;
+            gc.fill();
+        }
+
         gc.restore();
     }
 });

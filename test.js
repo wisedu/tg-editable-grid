@@ -31,10 +31,10 @@
         cells: {
             data: {
                 1: { // row index
-                    WID: { borderLeft: "red", borderTop: "red", borderBottom: "red", borderRight: "red" }
+                    WID: { borderLeft: "red", borderTop: "red", borderBottom: "red", borderRight: "red", message:"The following entrypoint(s) combined asset size exceeds the recommended limit (244 KiB). This can impact web performance." }
                 },
                 2: { // row index
-                    WID: { borderLeft: "red", borderTop: "red", borderBottom: "red", borderRight: "red" }
+                    WID: { borderLeft: "red", borderTop: "red", borderBottom: "red", borderRight: "red", message:"nnn" }
                 }
             }
         }
@@ -42,6 +42,7 @@
     
     document.getElementById("addrow").addEventListener("click", function(e){
         inst.getData().push({SZDWDM:"",SZDWDM_DISPLAY:"",CZRQ:"",WID:"",ZZMMDM:""});
+        document.getElementById("root").style.height = "200px"; 
     })
 
     document.getElementById("getData").addEventListener("click", function(e){

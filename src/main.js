@@ -103,6 +103,39 @@ export default class TG_EDITABLE_GRID {
                     this.cursor = null;
                 }
 
+                if (event.properties.cells && event.properties.cells.data !== undefined){
+                    for (const key in event.properties.cells.data) {
+                        const element = event.properties.cells.data[key];
+                        if (key === String(event.dataCell.y)){
+                            if (element[event.column.name] !== undefined){
+                                let x = event.bounds.x, y = event.bounds.y, w = event.bounds.width, h = event.bounds.height;
+                                let message = element[event.column.name].message;
+                                let gc = grid.canvas.gc;
+                                var tw = gc.getTextWidth(message) + 20;
+                                var th = gc.getTextHeight(gc.cache.font).descent + 28;
+                                // gc.moveTo(event.bounds.x, event.bounds.y);
+                                gc.cache.fillStyle = "#ff9900";
+                                gc.fillRect(x + w - tw - 4, y - th - 10, tw, th);
+
+                                gc.cache.textBaseline = 'middle';
+                                gc.cache.fillStyle = '#fff';
+                                gc.cache.font = '14px Helvetica,"PingFang SC","Microsoft YaHei"';
+                                gc.fillText(message, x + w - tw + 4, y - th + 4);
+
+                                gc.beginPath();
+                                gc.moveTo(x + w - 12 - 8, y - 10);
+                                gc.lineTo(x + w - 6 - 8, y + 6 - 10);
+                                gc.lineTo(x + w - 8, y - 10);
+                                gc.closePath();
+                                gc.cache.fillStyle = "#ff9900";
+                                gc.fill();
+
+                            }
+                        }
+                    }
+                    
+                }
+
                 var hoverCell = grid.hoverCell;
                 if (!event.gridCell.equals(hoverCell)) {
                     if (hoverCell) {
