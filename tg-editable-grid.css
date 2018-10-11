@@ -70,7 +70,7 @@ div.hypergrid-combobox > div {
     /*box-shadow: white 0 0 1px 1px;*/
     box-sizing: border-box;
     border: 1px solid #777;
-    background-color: ivory;
+    background-color: #FFF;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -110,7 +110,7 @@ div.hypergrid-combobox > div #dataContainer {
 }
 div.hypergrid-combobox > div #dataContainer option:hover {
     background-color: #777;
-    color: ivory;
+    color: #FFF;
 }
 
 .hypergrid-textfield{

@@ -80,24 +80,7 @@ export default class TG_EDITABLE_GRID {
         this.grid.setBehavior();
         this.grid.behavior.dataModel.setSchema(newSchema);
 
-        let rowheaderWidth = 80;//this.grid.behavior.getColumnWidth(-2);//初始化时宽度默认是100
-
-        if (this.grid.properties.columnAutosizing === true) {
-            let sumWidth = 0;
-            for (let index = 0; index < newSchema.length; index++) {
-                let width = this.grid.behavior.getColumnWidth(index);
-                sumWidth += width;
-            }
-            
-            let lastWidth = this.grid.behavior.getColumnWidth(newSchema.length - 1);
-            let newLastWidth = lastWidth + this.grid.getBounds().width - sumWidth - rowheaderWidth;
-            this.grid.behavior.setColumnWidth(newSchema.length - 1, newLastWidth);
-        } else {
-            let avgWidth = (this.grid.getBounds().width - rowheaderWidth) / newSchema.length
-            for (let index = 0; index < newSchema.length; index++) {
-                this.grid.behavior.setColumnWidth(index, avgWidth);
-            }
-        }
+        this.resetWidth();
 
         this.grid.getCellEditorAt = function(row) {
             return this.cellEditors.create(row.column.schema.editor, row);
@@ -136,6 +119,7 @@ export default class TG_EDITABLE_GRID {
 
     setData(data) {
         this.grid.setData({data: data});
+        this.resetWidth();
     }
 
     onEditorLoadData(model, value, callback) {
@@ -144,5 +128,28 @@ export default class TG_EDITABLE_GRID {
 
     getData() {
         return this.grid.behavior.dataModel.data;
+    }
+
+    resetWidth() {
+        this.grid.canvas.resize();
+        let cols = this.grid.getColumnCount();
+        let rowheaderWidth = 60;//this.grid.behavior.getColumnWidth(-2);//初始化时宽度默认是100
+
+        if (this.grid.properties.columnAutosizing === true) {
+            let sumWidth = 0;
+            for (let index = 0; index < cols; index++) {
+                let width = this.grid.behavior.getColumnWidth(index);
+                sumWidth += width;
+            }
+            
+            let lastWidth = this.grid.behavior.getColumnWidth(cols - 1);
+            let newLastWidth = lastWidth + this.grid.getBounds().width - sumWidth - rowheaderWidth;
+            this.grid.behavior.setColumnWidth(cols - 1, newLastWidth);
+        } else {
+            let avgWidth = (this.grid.getBounds().width - rowheaderWidth) / cols
+            for (let index = 0; index < cols; index++) {
+                this.grid.behavior.setColumnWidth(index, avgWidth);
+            }
+        }
     }
 }

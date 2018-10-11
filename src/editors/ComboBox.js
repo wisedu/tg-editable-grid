@@ -325,7 +325,8 @@ function slideDown() {
     var dropDownTopMargin = getFloat(this.dropdown, 'marginTop'),
         dropDownRows = this.dropdown.size,
         optionHeight = Math.ceil((this.dropdown.length && getFloat(this.dropdown[0], 'height') || 13.1875) * 2) / 2 + 1;
-    this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 5 + 'px'; // starts the slide down effect
+    this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 2 + 'px'; // starts the slide down effect
+    this.dropdown.style.height = dropDownTopMargin + optionHeight * dropDownRows  + 'px';
 
     // while in drop-down, listen for clicks in text box which means abprt
     this.input.addEventListener('mousedown', this.slideUpBound = slideUp.bind(this));

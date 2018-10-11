@@ -32,7 +32,7 @@ export default {
     "fixedLinesHWidth": 1,
     "fixedLinesVWidth": 1,
     "lineColor": "rgb(210,210,210)",
-    "backgroundColor2": "rgb(250,250,250)",
+    "backgroundColor2": "rgb(0,0,0)",
     "color": "rgb(25, 25, 25)",
     "fontFamily": font,
     "backgroundColor": "rgb(255, 255, 255)",
