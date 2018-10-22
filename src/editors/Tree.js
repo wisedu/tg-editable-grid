@@ -43,12 +43,11 @@ var Date = Textfield.extend('Tree', {
     showEditor: function() {
         prototype.showEditor.call(this);
     },
-    hideEditor: function() {
-        // this is where you would persist this.menuModes
-        prototype.hideEditor.call(this);
+    stopEditing: function(feedback) {
         if (this.node !== null && this.node !== undefined) {
             this.grid.behavior.dataModel.data[this.event.dataCell.y][this.column.schema.code] = this.node.id;
         }
+        prototype.stopEditing.call(this, feedback);
     },
     setBounds: function(cellBounds) {
         var style = this.el.style;

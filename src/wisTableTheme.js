@@ -20,7 +20,7 @@ export default {
     "columnHeaderForegroundSelectionFont": blodfont,
     "columnHeaderFont": blodfont,
     "rowHeaderFont": font,
-    "rowHeaderCheckboxes":true,
+    "rowHeaderCheckboxes":false,
     "rowHeaderNumbers":true,
     "rowHeaderForegroundSelectionFont": font,
     "rowHeaderBackgroundColor": "transparent",

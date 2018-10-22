@@ -42,6 +42,8 @@ export default class TG_EDITABLE_GRID {
 
         this.grid.cellRenderers.add("Checkbox", renderCheckbox);
         this.grid.cellRenderers.add("Borders", renderBorders);
+        
+        this.grid.properties.renderer = ['SimpleCell', 'Borders'];
         // this.grid.addEventListener('fin-editor-data-change', function(val){
         //     console.log(val, "~~~");
         // })
@@ -54,9 +56,9 @@ export default class TG_EDITABLE_GRID {
             newField.header = newField.caption;
             newField.editor = newField.xtype;
 
-            if (this.displayFieldFormat !== "" && newField.name.endsWith(this.displayFieldFormat) > -1) {
+            if (this.displayFieldFormat !== "" && newField.name.endsWith(this.displayFieldFormat) === true) {
                 let code_name = newField.name.replace(this.displayFieldFormat, "");
-                field.code = code_name;
+                newField.code = code_name;
             }
             switch (newField.xtype) {
                 case "select":
@@ -87,7 +89,13 @@ export default class TG_EDITABLE_GRID {
         }
 
         this.grid.behavior.dataModel.getCell = function(config, rendererName) {
-            if (config.columns[config.field] !== undefined && config.columns[config.field].render === "switcher") {
+            if (config.columns[config.field] !== undefined && typeof(config.columns[config.field].render) === "function") {
+                let newrender = config.columns[config.field].render(config, rendererName)
+                if (newrender === undefined) {
+                    newrender = rendererName
+                }
+                return this.grid.cellRenderers.get(newrender);
+            } else if (config.columns[config.field] !== undefined && config.columns[config.field].render === "switcher") {
                 return this.grid.cellRenderers.get("Checkbox");
             } else {
                 return this.grid.cellRenderers.get(rendererName);
@@ -103,37 +111,48 @@ export default class TG_EDITABLE_GRID {
                     this.cursor = null;
                 }
 
-                if (event.properties.cells && event.properties.cells.data !== undefined){
-                    for (const key in event.properties.cells.data) {
-                        const element = event.properties.cells.data[key];
+                if (event.properties.custom && event.properties.custom.error !== undefined){
+                    for (const key in event.properties.custom.error) {
+                        const element = event.properties.custom.error[key];
                         if (key === String(event.dataCell.y)){
                             if (element[event.column.name] !== undefined){
                                 let x = event.bounds.x, y = event.bounds.y, w = event.bounds.width, h = event.bounds.height;
                                 let message = element[event.column.name].message;
                                 let gc = grid.canvas.gc;
-                                var tw = gc.getTextWidth(message) + 20;
-                                var th = gc.getTextHeight(gc.cache.font).descent + 28;
-                                // gc.moveTo(event.bounds.x, event.bounds.y);
-                                gc.cache.fillStyle = "#ff9900";
-                                gc.fillRect(x + w - tw - 4, y - th - 10, tw, th);
+                                gc.font = '14px Helvetica,"PingFang SC","Microsoft YaHei"';
+                                let tw = gc.getTextWidth(message);
+                                let th = gc.getTextHeight(gc.font).descent + 28;
 
-                                gc.cache.textBaseline = 'middle';
-                                gc.cache.fillStyle = '#fff';
-                                gc.cache.font = '14px Helvetica,"PingFang SC","Microsoft YaHei"';
-                                gc.fillText(message, x + w - tw + 4, y - th + 4);
+                                let tipPointer = {
+                                    center_x: x + w - 6 - 8,
+                                    center_y: y + 6 - 10,
+                                    left_x: x + w - 6 - 8 - tw / 2,
+                                    left_y: y + 6 - 10 - th
+                                };
+                                if (tipPointer.left_x < 0) {
+                                    tipPointer.left_x = 0;
+                                }
 
-                                gc.beginPath();
-                                gc.moveTo(x + w - 12 - 8, y - 10);
-                                gc.lineTo(x + w - 6 - 8, y + 6 - 10);
-                                gc.lineTo(x + w - 8, y - 10);
-                                gc.closePath();
-                                gc.cache.fillStyle = "#ff9900";
-                                gc.fill();
+                                gc.save();
+                                gc.fillStyle = "#ff9900";
+                                gc.fillRect(tipPointer.left_x, tipPointer.left_y, tw + 12, th);
 
+                                gc.textBaseline = 'top';
+                                gc.font = '14px Helvetica,"PingFang SC","Microsoft YaHei"';
+                                gc.fillStyle = '#fff';
+                                gc.fillText(message, tipPointer.left_x + 6, tipPointer.left_y + 6);
+                                
+                                // gc.beginPath();
+                                // gc.moveTo(x + w - 6 - 8 - 6, y + 6 - 10 + 6);
+                                // gc.lineTo(x + w - 6 - 8, y + 6 - 10);
+                                // gc.lineTo(x + w - 6 - 8 + 6, y + 6 - 10 - 6);
+                                // gc.closePath();
+                                // gc.cache.fillStyle = "#ff9900";
+                                // gc.fill();
+                                gc.restore();
                             }
                         }
                     }
-                    
                 }
 
                 var hoverCell = grid.hoverCell;
@@ -151,7 +170,19 @@ export default class TG_EDITABLE_GRID {
     }
 
     setData(data) {
-        this.grid.setData({data: data});
+        let emptyData = {};
+        this.grid.getColumns().map(column => {
+            emptyData[column.schema.name] = "";
+            if (this.displayFieldFormat !== "" && column.schema.name.endsWith(this.displayFieldFormat) === true) {
+                let code_name = column.schema.name.replace(this.displayFieldFormat, "");
+                emptyData[code_name] = "";
+            }
+        })
+        let newData = data.map(item => {
+            return Object.assign({}, emptyData, item);
+        });
+
+        this.grid.setData({data: newData});
         this.resetWidth();
     }
 
@@ -166,7 +197,7 @@ export default class TG_EDITABLE_GRID {
     resetWidth() {
         this.grid.canvas.resize();
         let cols = this.grid.getColumnCount();
-        let rowheaderWidth = 60;//this.grid.behavior.getColumnWidth(-2);//初始化时宽度默认是100
+        let rowheaderWidth = 40;//this.grid.behavior.getColumnWidth(-2);//初始化时宽度默认是100
 
         if (this.grid.properties.columnAutosizing === true) {
             let sumWidth = 0;

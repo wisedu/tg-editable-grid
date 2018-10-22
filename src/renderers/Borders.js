@@ -3,56 +3,67 @@ import CellRenderer from 'fin-hypergrid/src/cellRenderers/CellRenderer';
 let Borders = CellRenderer.extend('Borders', {
     paint: function (gc, config) {
         let bounds = config.bounds, x = bounds.x, y = bounds.y, w = bounds.width, h = bounds.height;
-        let color;
+        let rowIndex = config.dataCell.y;
+        if (config.gridCell.x === -2 && config.gridCell.y === 0) {
+            let bgcolor = 'rgb(250, 250, 250)';
+            gc.cache.fillStyle = bgcolor;
+            gc.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        }
+        if (config.custom === undefined || config.custom.error === undefined){
+            return;
+        }
+        let row = config.custom.error[rowIndex] || {};
+        let cell = row[config.name] || {};
+
+        let topColor = cell.borderTop;
+        let rightColor = cell.borderRight;
+        let bottomColor = cell.borderBottom;
+        let leftColor = cell.borderLeft;
 
         gc.save();
         // gc.translate(-.5, .5); // paint "sharp" lines on pixels instead of "blury" lines between pixels
         gc.cache.lineWidth = 1;
 
-        color = config.borderTop;
-        if (color) {
+        if (topColor) {
             gc.beginPath();
             gc.moveTo(x, y);
             gc.lineTo(x + w, y);
-            gc.cache.strokeStyle = color;
+            gc.strokeStyle = topColor;
             gc.stroke();
         }
 
-        color = config.borderRight;
-        if (color) {
+        if (rightColor) {
             gc.beginPath();
             gc.moveTo(x + w - 1, y);
             gc.lineTo(x + w - 1, y + h);
-            gc.cache.strokeStyle = color;
+            gc.strokeStyle = rightColor;
             gc.stroke();
         }
 
-        color = config.borderBottom;
-        if (color) {
+        if (bottomColor) {
             gc.beginPath();
             gc.moveTo(x, y + h - 1);
             gc.lineTo(x + w, y + h - 1);
-            gc.cache.strokeStyle = color;
+            gc.strokeStyle = bottomColor;
             gc.stroke();
         }
 
-        color = config.borderLeft;
-        if (color) {
+        if (leftColor) {
             gc.beginPath();
             gc.moveTo(x, y);
             gc.lineTo(x, y + h);
-            gc.cache.strokeStyle = color;
+            gc.strokeStyle = leftColor;
             gc.stroke();
         }
 
-        if (color) {
+        if (topColor) {
             gc.beginPath();
             gc.moveTo(x + w, y);
             gc.lineTo(x + w, y + 12);
             gc.lineTo(x + w - 12, y);
             // gc.lineTo(x, y);
             gc.closePath();
-            gc.cache.fillStyle = color;
+            gc.fillStyle = topColor;
             gc.fill();
         }
 
