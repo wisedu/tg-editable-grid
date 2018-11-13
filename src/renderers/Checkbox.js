@@ -23,9 +23,17 @@ let Checkbox = CellRenderer.extend('Checkbox', {
             height -= config.gridLinesHWidth;
         }
 
-        if (config.mouseDown) {
-            config.dataRow[config.field] = !config.value;
-        }
+        // console.log(config);
+        // if (config.mouseDown) {
+        //     config.dataRow[config.field] = !config.value;
+        //     gc.canvas.dispatchEvent(new CustomEvent('tg-checkbox-change', {"detail":{
+        //         name:config.field,
+        //         value:config.dataRow[config.field],
+        //         dataRow:config.dataRow,
+        //         schema:config.columns,
+        //         dataCell:config.dataCell
+        //     }}));
+        // }
 
         if (config.value === true) {
             bgcolor = '#2E8CF0';

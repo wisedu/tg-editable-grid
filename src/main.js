@@ -102,6 +102,30 @@ export default class TG_EDITABLE_GRID {
             }
         };
 
+        this.grid.mixIn.call(this.grid.behavior.featureMap.CellClick, {
+            handleClick:function(grid, event) {
+                var consumed = (event.isDataCell || event.isTreeColumn) && (
+                    this.openLink(grid, event) !== undefined ||
+                    grid.cellClicked(event)
+                );
+
+                if (event.columnProperties.render === "switcher") {
+                    event.value = !event.value;
+                    grid.canvas.dispatchEvent(new CustomEvent('tg-checkbox-change', {"detail":{
+                        name:event.columnProperties.field,
+                        value:event.dataRow[event.columnProperties.field],
+                        dataRow:event.dataRow,
+                        schema:event.columnProperties.columns,
+                        dataCell:event.dataCell
+                    }}));
+                }
+        
+                if (!consumed && this.next) {
+                    this.next.handleClick(grid, event);
+                }        
+            }
+        });
+
         this.grid.mixIn.call(this.grid.behavior.featureMap.OnHover, {
             handleMouseMove:function(grid, event) {
 
