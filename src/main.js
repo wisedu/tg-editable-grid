@@ -102,6 +102,10 @@ export default class TG_EDITABLE_GRID {
             }
         };
 
+        this.grid.canvas.gc.canvas.addEventListener('wheel', function(e){
+            that.grid.cancelEditing();
+        })
+
         this.grid.mixIn.call(this.grid.behavior.featureMap.CellClick, {
             handleClick:function(grid, event) {
                 var consumed = (event.isDataCell || event.isTreeColumn) && (
@@ -190,7 +194,7 @@ export default class TG_EDITABLE_GRID {
                     this.next.handleMouseMove(grid, event);
                 }
             }
-        })
+        });
     }
 
     setData(data) {

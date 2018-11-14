@@ -1,4 +1,5 @@
 'use strict';
+import Popper from 'popper.js/dist/umd/popper.js';
 import Queueless from './queueless.js';
 import InspireTree from 'inspire-tree';
 import InspireTreeDOM from 'inspire-tree-dom';
@@ -15,7 +16,7 @@ var Date = Textfield.extend('Tree', {
     template:['<div class="hypergrid-combobox" title="">',
     '    <input type="text" lang="{{locale}}" style="{{style}}">',
     '    <span title="Click for options"></span>',
-    '    <div>',
+    '    <div style="height:200px">',
     '       <div id="dataContainer"></div>',
     '    </div>',
     '</div>'].join('\n'),
@@ -69,6 +70,18 @@ var Date = Textfield.extend('Tree', {
     },
     toggleDropDown: function() {
         let that = this;
+
+        new Popper(this.input, this.dropdown.parentElement, {
+            modifiers: {
+                computeStyle:{
+                    gpuAcceleration: false
+                },
+                preventOverflow :{
+                    boundariesElement: 'window'
+                }
+            }
+        });
+
         function callback(datas){
             var tree = new InspireTree({
                 data: datas

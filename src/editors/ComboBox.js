@@ -3,6 +3,7 @@
 // The drop-down has sections which are toggled from a control area between the text-box and the drop-down.
 
 /* eslint-env browser */
+import Popper from 'popper.js/dist/umd/popper.js';
 import Textfield from 'fin-hypergrid/src/cellEditors/Textfield';
 var prototype = Textfield.parent('CellEditor').prototype;
 import Queueless from './queueless.js';
@@ -53,8 +54,8 @@ var ComboBox = Textfield.extend('ComboBox', {
 '<div class="hypergrid-combobox" title="">',
 '    <input type="text" lang="{{locale}}" style="{{style}}">',
 '    <span title="Click for options"></span>',
-'    <div>',
-'        <select id="dataContainer" size="15" lang="{{locale}}"></select>',
+'    <div style="height:144px">',
+'        <select id="dataContainer" size="8" lang="{{locale}}"></select>',
 '    </div>',
 '</div>'
     ].join('\n'),
@@ -201,6 +202,17 @@ var ComboBox = Textfield.extend('ComboBox', {
     toggleDropDown: function() {
         let that = this;
         let optgroup = this.dropdown;
+
+        new Popper(this.input, this.dropdown.parentElement, {
+            modifiers: {
+                computeStyle:{
+                    gpuAcceleration: false
+                },
+                preventOverflow :{
+                    boundariesElement: 'window'
+                }
+            }
+        });
 
         while (optgroup.firstElementChild) {
             optgroup.firstElementChild.remove();
