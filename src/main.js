@@ -72,6 +72,8 @@ export default class TG_EDITABLE_GRID {
                     newField.editor = "text"
                     break;
                 case "date-local":
+                case "date-full":
+                case "date-ym":
                     newField.editor = "datetime"
                     break;
                 case "switcher":

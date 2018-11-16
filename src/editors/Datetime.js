@@ -6,20 +6,40 @@ var prototype = Textfield.parent('CellEditor').prototype;
 let calendar;
 var Date = Textfield.extend('Datetime', {
     template:  `<div class="hypergrid-combobox" title="">
-    <input type="text" lang="{{locale}}" style="{{style}}">
+    <input type="text" lang="{{locale}}" style="{{style}}" readonly>
     <span title="Click for datepicker"></span>
 </div>`,
     initialize: function(grid) {
         var el = this.el;
         this.input = el.querySelector('input');
+        this.dropper = el.querySelector('span');
         this.selectAll = function() {
             var lastCharPlusOne = this.getEditorValue().length;
             this.input.setSelectionRange(0, lastCharPlusOne);
         };
+        this.dropper.addEventListener('mousedown', this.toggleDropDown.bind(this));
     },
     showEditor: function() {
+        let that = this;
         prototype.showEditor.call(this);
-        calendar = flatpickr(this.el, {});
+        setTimeout(function(){
+            calendar = flatpickr(that.input, {
+                "locale": {
+                    weekdays: {
+                        shorthand: ["日", "一", "二", "三", "四", "五", "六"],
+                        longhand: ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"]
+                    },
+                    months: {
+                        shorthand: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"],
+                        longhand: ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+                    },
+                    rangeSeparator: " 至 ",
+                    weekAbbreviation: "周",
+                    scrollTitle: "滚动切换",
+                    toggleTitle: "点击切换 12/24 小时时制"
+                }
+            });
+        },100)
     },
     hideEditor: function() {
         // this is where you would persist this.menuModes
@@ -34,6 +54,18 @@ var Date = Textfield.extend('Datetime', {
         style.width = px(cellBounds.width - 20);
         style.height = px(cellBounds.height - 20);
     },
+    toggleDropDown: function(event) {
+        var fireOnThis = this.input;
+        if( document.createEvent ) {
+            var evObj = document.createEvent('MouseEvents');
+            evObj.initEvent( 'mousedown', true, false );
+            fireOnThis.dispatchEvent(evObj);
+        } else if( document.createEventObject ) {
+            fireOnThis.fireEvent('onmousedown');
+        }
+
+
+    }
 });
 function px(n) { return n + 'px'; }
 
