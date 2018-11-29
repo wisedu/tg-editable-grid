@@ -12,6 +12,7 @@ import utils from './utils.js';
 export default class TG_EDITABLE_GRID {
     constructor(dom, options){
         this.displayFieldFormat = options.displayFieldFormat;
+        this.readOnly = options.readOnly;
         this.utils = utils;
         Hypergrid.registerTheme(wisTable);
         Hypergrid.applyTheme('wisTable');
@@ -54,30 +55,32 @@ export default class TG_EDITABLE_GRID {
         schema.map(field => {
             let newField = Object.assign({}, field);
             newField.header = newField.caption;
-            newField.editor = newField.xtype;
 
             if (this.displayFieldFormat !== "" && newField.name.endsWith(this.displayFieldFormat) === true) {
                 let code_name = newField.name.replace(this.displayFieldFormat, "");
                 newField.code = code_name;
             }
-            switch (newField.xtype) {
-                case "select":
-                    newField.editor = "comboBox"
-                    newField.loaddata = that.onEditorLoadData
-                    break;
-                case "tree":
-                    newField.loaddata = that.onEditorLoadData
-                    break;
-                case "text":
-                    newField.editor = "text"
-                    break;
-                case "date-local":
-                case "date-full":
-                case "date-ym":
-                    newField.editor = "datetime"
-                    break;
-                case "switcher":
-                    newField.render = "switcher"
+            if (this.readOnly !== true) {
+                newField.editor = newField.xtype;
+                switch (newField.xtype) {
+                    case "select":
+                        newField.editor = "comboBox"
+                        newField.loaddata = that.onEditorLoadData
+                        break;
+                    case "tree":
+                        newField.loaddata = that.onEditorLoadData
+                        break;
+                    case "text":
+                        newField.editor = "text"
+                        break;
+                    case "date-local":
+                    case "date-full":
+                    case "date-ym":
+                        newField.editor = "datetime"
+                        break;
+                    case "switcher":
+                        newField.render = "switcher"
+                }
             }
             newSchema.push(newField);
         });
