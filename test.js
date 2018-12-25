@@ -7,8 +7,9 @@
     let inst = new EditableGrid(document.getElementById("root"), {
         displayFieldFormat: "_DISPLAY"
     });
+    console.log(inst)
     inst.onEditorLoadData = function (schmea, value, callback) {
-
+        console.log(schmea, value, callback)
     }
     inst.setSchema([{
             name: "SZDWDM_DISPLAY",
@@ -87,7 +88,7 @@
             WID: "",
             ZZMMDM: ""
         });
-        document.getElementById("root").style.height = "200px";
+        // document.getElementById("root").style.height = "200px";
     })
 
     document.getElementById("getData").addEventListener("click", function (e) {

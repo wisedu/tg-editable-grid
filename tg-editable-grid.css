@@ -11,7 +11,7 @@ div.hypergrid-combobox {
     /* font-size: 12px; */
     margin: 10px;
 }
-div.hypergrid-combobox > input {
+div.hypergrid-combobox > input{
     border: 1px #2E8CF0 solid;
     border-radius: 4px;
     position: absolute;
@@ -58,7 +58,7 @@ div.hypergrid-combobox > span::after {
     content: '\25BE';
     font-size: 20px;
 }
-div.hypergrid-combobox > div {
+div.hypergrid-combobox > div.hypergrid-combobox-container {
     box-shadow: 3px 3px 5px #AAA;
     position: absolute;
     left: -1px;
@@ -108,6 +108,10 @@ div.hypergrid-combobox > div #dataContainer {
     background-color: transparent;
     font-size: 9px;
 }
+div.hypergrid-combobox > div #dataContainer option{
+    padding: 0 4px;
+    margin: 5px 0;
+}
 div.hypergrid-combobox > div #dataContainer option:hover {
     background-color: #777;
     color: #FFF;
@@ -118,4 +122,14 @@ div.hypergrid-combobox > div #dataContainer option:hover {
     border-radius: 4px;
     background-color: #fff;
     margin: 10px;
+}
+div.hypergrid-combobox-container > input  {
+    border: 1px #efefef solid;
+    height: 28px;
+    width: 100%;
+    outline: 0;
+    padding-left: 4px;
+    box-sizing: border-box;
+    color: black;
+    background-color: transparent;
 }

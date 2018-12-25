@@ -34,7 +34,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         this.input = el.querySelector('input');
         this.dropper = el.querySelector('span');
         this.options = el.querySelector('div');
-        // this.controls = this.options.querySelector('div');
+        this.search = this.options.querySelector('input');
         this.dropdown = this.options.querySelector('select');
 
         this.controllable = this.modes.length > 1;
@@ -48,13 +48,16 @@ var ComboBox = Textfield.extend('ComboBox', {
         this.dropper.addEventListener('mousedown', this.toggleDropDown.bind(this));
         this.dropdown.addEventListener('mousewheel', function(e) { e.stopPropagation(); });
         this.dropdown.addEventListener('change', this.insertText.bind(this));
+        this.search.addEventListener('input', this.searchText.bind(this));
+
     },
 
     template: [
 '<div class="hypergrid-combobox" title="">',
-'    <input type="text" lang="{{locale}}" style="{{style}}">',
+'    <input type="text" lang="{{locale}}" style="{{style}}" readonly="readonly">',
 '    <span title="Click for options"></span>',
-'    <div style="height:144px">',
+'    <div class="hypergrid-combobox-container">',
+'        <input type="text" name="search" lang="{{locale}}" style="{{style}}" autofocus placeholder="请输入关键词" autocomplete="off">',
 '        <select id="dataContainer" size="8" lang="{{locale}}"></select>',
 '    </div>',
 '</div>'
@@ -235,6 +238,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         }
         
         let loaddata = this.column.schema.loaddata;
+        this.search.value = '';
         if (loaddata !== undefined) {
             loaddata(this.column.schema, this.input.value, callback)
         } else {
@@ -251,6 +255,34 @@ var ComboBox = Textfield.extend('ComboBox', {
 
         // close the drop-down
         this.toggleDropDown();
+    },
+
+    searchText: function(){
+        let that = this;
+        let keyword = this.search.value;
+        let loaddata = this.column.schema.loaddata;
+        let optgroup = this.dropdown;
+        let opts = this.dropdown.querySelectorAll('option');
+        opts.forEach(function(opt){
+            optgroup.removeChild(opt);
+        });
+        function callback(datas){
+            if(keyword !== ''){
+                datas = datas.filter(function(item){
+                    return item.label.indexOf(keyword)>-1;
+                });
+            }
+            datas.map(item => {
+                var option;
+                if (typeof(item) === "string") {
+                    option = new Option(item, item);
+                } else {
+                    option = new Option(item.label, item.value);
+                }
+                optgroup.appendChild(option);
+            });
+        }
+        loaddata(this.column.schema, keyword, callback);
     }
 });
 
@@ -336,7 +368,7 @@ function slideDown() {
     var dropDownTopMargin = getFloat(this.dropdown, 'marginTop'),
         dropDownRows = this.dropdown.size,
         optionHeight = Math.ceil((this.dropdown.length && getFloat(this.dropdown[0], 'height') || 13.1875) * 2) / 2 + 1;
-    this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 2 + 'px'; // starts the slide down effect
+    this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 28 + 'px'; // starts the slide down effect
     this.dropdown.style.height = dropDownTopMargin + optionHeight * dropDownRows  + 'px';
 
     // while in drop-down, listen for clicks in text box which means abprt
