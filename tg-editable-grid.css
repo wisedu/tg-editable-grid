@@ -73,7 +73,7 @@ div.hypergrid-combobox > div.hypergrid-combobox-container {
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
-    z-index: 2;
+    z-index: 999;
 }
 /* div.hypergrid-combobox > div > div {
     position: absolute;

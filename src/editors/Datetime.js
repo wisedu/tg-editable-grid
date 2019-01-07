@@ -37,6 +37,15 @@ var Date = Textfield.extend('Datetime', {
                     weekAbbreviation: "周",
                     scrollTitle: "滚动切换",
                     toggleTitle: "点击切换 12/24 小时时制"
+                },
+                // onChange: function(selectedDates, dateStr, instance) {
+                //     event.stopPropagation();
+                // },
+                onMonthChange: function(selectedDates, dateStr, instance, e) {
+                    event.stopPropagation();
+                },
+                onYearChange: function(selectedDates, dateStr, instance, e) {
+                    event.stopPropagation();
                 }
             });
         },100)
@@ -58,7 +67,7 @@ var Date = Textfield.extend('Datetime', {
         var fireOnThis = this.input;
         if( document.createEvent ) {
             var evObj = document.createEvent('MouseEvents');
-            evObj.initEvent( 'mousedown', true, false );
+            evObj.initEvent( 'mousedown', false, false );
             fireOnThis.dispatchEvent(evObj);
         } else if( document.createEventObject ) {
             fireOnThis.fireEvent('onmousedown');
