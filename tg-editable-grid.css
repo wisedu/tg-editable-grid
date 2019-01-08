@@ -95,7 +95,7 @@ div.hypergrid-combobox > div span:not([title]) {
 div.hypergrid-combobox > div #dataContainer {
     /* position: absolute; */
     text-align: left;
-    overflow: scroll;
+    overflow: auto;
     padding-top: 2px;
     border: 0;
     outline: 0;
