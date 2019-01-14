@@ -107,7 +107,7 @@ div.hypergrid-combobox > div #dataContainer {
     left: 0;
     right: 0;
     background-color: transparent;
-    font-size: 9px;
+    font-size: 14px;
 }
 div.hypergrid-combobox > div #dataContainer option{
     padding: 0 4px;
