@@ -16,7 +16,7 @@ var Date = Textfield.extend('Tree', {
     template:['<div class="hypergrid-combobox" title="">',
     '    <input type="text" lang="{{locale}}" style="{{style}}">',
     '    <span title="Click for options"></span>',
-    '    <div style="height:200px">',
+    '    <div class="hypergrid-combobox-container">',
     '       <div id="dataContainer"></div>',
     '    </div>',
     '</div>'].join('\n'),
@@ -39,7 +39,6 @@ var Date = Textfield.extend('Tree', {
 
         this.dropper.addEventListener('mousedown', this.toggleDropDown.bind(this));
         this.dropdown.addEventListener('mousewheel', function(e) { e.stopPropagation(); });
-        // this.dropdown.addEventListener('change', this.insertText.bind(this));
     },
     showEditor: function() {
         prototype.showEditor.call(this);
@@ -49,14 +48,6 @@ var Date = Textfield.extend('Tree', {
             this.grid.behavior.dataModel.data[this.event.dataCell.y][this.column.schema.code] = this.node.id;
         }
         prototype.stopEditing.call(this, feedback);
-    },
-    setBounds: function(cellBounds) {
-        var style = this.el.style;
-
-        style.left = px(cellBounds.x);
-        style.top = px(cellBounds.y);
-        style.width = px(cellBounds.width - 20);
-        style.height = px(cellBounds.height - 20);
     },
     cancelEditing: function() {
         this.node = null;
@@ -123,7 +114,7 @@ var Date = Textfield.extend('Tree', {
 
         style.left = px(cellBounds.x);
         style.top = px(cellBounds.y);
-        style.width = px(cellBounds.width - 20);
+        style.width = px(cellBounds.width - 16);
         style.height = px(cellBounds.height - 20);
     },
 });
@@ -140,9 +131,10 @@ function slideDown() {
 
     // show the drop-down slide down effect
     this.options.style.visibility = 'visible';
+    var OlLi = this.dropdown.querySelectorAll('#dataContainer>ol>li');
     var dropDownTopMargin = getFloat(this.dropdown, 'marginTop'),
-        dropDownRows = 20,
-        optionHeight = Math.ceil((this.dropdown.length && getFloat(this.dropdown[0], 'height') || 13.1875) * 2) / 2 + 1;
+        dropDownRows = 8,
+        optionHeight = Math.ceil((OlLi.length && getFloat(OlLi[0], 'height') || 13.1875) * 2) / 2 + 1;
     this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 2 + 'px'; // starts the slide down effect
     this.dropdown.style.height = dropDownTopMargin + optionHeight * dropDownRows  + 'px';
 

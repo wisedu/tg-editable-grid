@@ -48,6 +48,17 @@ export default class TG_EDITABLE_GRID {
         // this.grid.addEventListener('fin-editor-data-change', function(val){
         //     console.log(val, "~~~");
         // })
+        // hover 事件设置tooltips
+        var that = this;
+        this.grid.addEventListener('fin-cell-enter', function(e) {
+            //how to set the tooltip....
+            var hoverCell = that.grid.hoverCell;
+            var renderedData = that.grid.getRenderedData();
+            if(hoverCell.x >= 0){
+                var title = renderedData[hoverCell.y][hoverCell.x];
+                that.grid.setAttribute('title', title);
+            }
+        });
     }
     setSchema(schema) {
         let that = this;

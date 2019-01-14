@@ -18,6 +18,6 @@ export default {
         node(),
         cjs(),
         babel(),
-        // uglify.uglify()
+        uglify.uglify()
     ]
 };

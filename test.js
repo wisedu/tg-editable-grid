@@ -7,8 +7,78 @@
     let inst = new EditableGrid(document.getElementById("root"), {
         displayFieldFormat: "_DISPLAY"
     });
+    var toTreeData = function(data, parent_id, options) {
+        let opt = options || {ukey:"id", pkey:'parent_id', toCKey:'children'}
+        var tree = [];
+        var temp;
+        for (var i = 0; i < data.length; i++) {
+          if (data[i][opt.pkey] == parent_id || data[i][opt.ukey] === data[i][opt.pkey]) {
+            var obj = data[i];
+            temp = toTreeData(data, data[i][opt.ukey], opt);
+            if (temp.length > 0) {
+              obj[opt.toCKey] = temp;
+            }
+            tree.push(obj);
+          }
+        }
+        return tree;
+    };
     inst.onEditorLoadData = function (schmea, value, callback) {
-        //console.log(schmea, value, callback)
+        console.log(schmea, value, callback)
+        // var datas = [
+        //     {id: "01", name: "2017", text: "2017", value: "001"},
+        //     {id: "02", name: "2018", text: "2018", value: "002"},
+        //     {id: "03", name: "2019", text: "2019", value: "003"}
+        // ];
+        var datas =  [{
+                "text": "基本信息维护",
+                "id": "1",
+                "parentid": "-1",
+                "value": "$2.0"
+            },
+            {
+                "id": "2",
+                "parentid": "1",
+                "text": "新增",
+                "value": "$2.1"
+            }, {
+                "id": "3",
+                "parentid": "1",
+                "text": "删除",
+                "value": "$2.2"
+            }, {
+                "id": "4",
+                "parentid": "1",
+                "text": "编辑",
+                "value": "$2.3"
+            }, {
+                "id": "5",
+                "parentid": "1",
+                "text": "上传附件",
+                "value": "$2.4"
+            },  {
+                "id": "11",
+                "text": "信息历史查询",
+                "parentid": "-1",
+                "value": "$2.5"
+            }, {
+                "id": "7",
+                "parentid": "11",
+                "text": "导出",
+                "value": "$2.6"
+            }, {
+                "id": "8",
+                "text": "附件",
+                "parentid": "11",
+                "value": "$2.7"
+            },{
+                "id": "9",
+                "text": "xxx",
+                "parentid": "8",
+                "value": "$2.8"
+            }];
+        datas = toTreeData(datas,"-1", {ukey:"id", pkey:'parentid', toCKey:'children'})
+        callback(datas)
     }
     inst.setSchema([{
             name: "SZDWDM_DISPLAY",
