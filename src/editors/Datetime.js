@@ -64,16 +64,7 @@ var Date = Textfield.extend('Datetime', {
         style.height = px(cellBounds.height - 20);
     },
     toggleDropDown: function(event) {
-        var fireOnThis = this.input;
-        if( document.createEvent ) {
-            var evObj = document.createEvent('MouseEvents');
-            evObj.initEvent( 'mousedown', false, false );
-            fireOnThis.dispatchEvent(evObj);
-        } else if( document.createEventObject ) {
-            fireOnThis.fireEvent('onmousedown');
-        }
-
-
+        calendar.toggle();
     }
 });
 function px(n) { return n + 'px'; }

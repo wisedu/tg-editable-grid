@@ -30,6 +30,7 @@ div.hypergrid-combobox > input{
     box-sizing: border-box;
     /* font-size: 12px; */
     color: black;
+    cursor: pointer;
     background-color: transparent;
 }
 div.hypergrid-combobox > span {
