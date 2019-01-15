@@ -134,7 +134,7 @@ function slideDown() {
     var OlLi = this.dropdown.querySelectorAll('#dataContainer>ol>li');
     var dropDownTopMargin = getFloat(this.dropdown, 'marginTop'),
         dropDownRows = 8,
-        optionHeight = Math.ceil((OlLi.length && getFloat(OlLi[0], 'height') || 13.1875) * 2) / 2 + 1;
+        optionHeight = 25; //Math.ceil((OlLi.length && getFloat(OlLi[0], 'height') || 13.1875) * 2) / 2 + 1;
     this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 2 + 'px'; // starts the slide down effect
     this.dropdown.style.height = dropDownTopMargin + optionHeight * dropDownRows  + 'px';
 
