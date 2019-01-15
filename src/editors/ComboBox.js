@@ -227,7 +227,7 @@ var ComboBox = Textfield.extend('ComboBox', {
                 if (typeof(item) === "string") {
                     option = new Option(item, item);
                 } else {
-                    option = new Option(item.label, item.value);
+                    option = new Option(item.label||item.text, item.value);
                 }
                 optgroup.appendChild(option);
             })
@@ -240,7 +240,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         let loaddata = this.column.schema.loaddata;
         this.search.value = '';
         if (loaddata !== undefined) {
-            loaddata(this.column.schema, this.input.value, callback)
+            loaddata(this.column.schema, this.search.value, callback)
         } else {
             callback();
         }
