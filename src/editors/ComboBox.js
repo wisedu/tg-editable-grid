@@ -3,7 +3,7 @@
 // The drop-down has sections which are toggled from a control area between the text-box and the drop-down.
 
 /* eslint-env browser */
-import Popper from 'popper.js/dist/umd/popper.js';
+// import Popper from 'popper.js/dist/umd/popper.js';
 import Textfield from 'fin-hypergrid/src/cellEditors/Textfield';
 var prototype = Textfield.parent('CellEditor').prototype;
 import Queueless from './queueless.js';
@@ -206,16 +206,16 @@ var ComboBox = Textfield.extend('ComboBox', {
         let that = this;
         let optgroup = this.dropdown;
 
-        new Popper(this.input, this.dropdown.parentElement, {
-            modifiers: {
-                computeStyle:{
-                    gpuAcceleration: false
-                },
-                preventOverflow :{
-                    boundariesElement: 'window'
-                }
-            }
-        });
+        // new Popper(this.input, this.dropdown.parentElement, {
+        //     modifiers: {
+        //         computeStyle:{
+        //             gpuAcceleration: false
+        //         },
+        //         preventOverflow :{
+        //             boundariesElement: 'window'
+        //         }
+        //     }
+        // });
 
         while (optgroup.firstElementChild) {
             optgroup.firstElementChild.remove();
@@ -364,12 +364,31 @@ function slideDown() {
     this.dropdown.style.scrollTop = 0; // rewind
 
     // show the drop-down slide down effect
-    this.options.style.visibility = 'visible';
     var dropDownTopMargin = getFloat(this.dropdown, 'marginTop'),
         dropDownRows = this.dropdown.size,
         optionHeight = Math.ceil((this.dropdown.length && getFloat(this.dropdown[0], 'height') || 13.1875) * 2) / 2 + 1;
-    this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 28 + 'px'; // starts the slide down effect
-    this.dropdown.style.height = dropDownTopMargin + optionHeight * dropDownRows  + 'px';
+
+    var optionsHeight = dropDownTopMargin + optionHeight * dropDownRows + 28; // starts the slide down effect
+    var dropdownHeight = dropDownTopMargin + optionHeight * dropDownRows;
+    var elHeight = parseInt(this.el.style.height) || 0;
+    var elTop = parseInt(this.el.style.top) || 0;
+    var elBottom = elTop + elHeight;
+    var windowHeight = window.innerHeight;
+    var windowScroll = window.pageYOffset;
+
+    var optionsDom = this.options;
+    //下拉框向下显示
+    if(elBottom + optionsHeight <= windowHeight + windowScroll){
+        optionsDom.style.top = elHeight + 'px';
+        optionsDom.style.bottom = 'auto';
+    }else{
+        optionsDom.style.top = 'auto';
+        optionsDom.style.bottom = elHeight + 'px';
+    }
+
+    this.dropdown.style.height = dropdownHeight + 'px';
+    optionsDom.style.height = optionsHeight + 'px';
+    optionsDom.style.visibility = 'visible';
 
     // while in drop-down, listen for clicks in text box which means abprt
     this.input.addEventListener('mousedown', this.slideUpBound = slideUp.bind(this));
@@ -382,13 +401,14 @@ function slideUp() {
     // stop listening to input clicks
     this.input.removeEventListener('mousedown', this.slideUpBound);
 
-    // start the slide up effect
-    this.options.style.height = 0;
-
     // schedule the hide to occur after the slide up effect
-    this.optionsTransition.begin(function(event) {
-        this.style.visibility = 'hidden';
-    });
+    // this.optionsTransition.begin(function(event) {
+    //     this.style.visibility = 'hidden';
+    // });
+
+    // start the slide up effect
+    this.options.style.visibility = 'hidden';
+    this.options.style.height = 0;
 }
 
 function getFloat(el, style) {
