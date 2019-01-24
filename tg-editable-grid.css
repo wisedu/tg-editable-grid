@@ -76,6 +76,8 @@ div.hypergrid-combobox > div.hypergrid-combobox-container {
     -moz-user-select: none;
     -ms-user-select: none;
     z-index: 999;
+    border-radius: 4px;
+    overflow: auto;
 }
 /* div.hypergrid-combobox > div > div {
     position: absolute;

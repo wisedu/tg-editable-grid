@@ -371,7 +371,8 @@ function slideDown() {
     var optionsHeight = dropDownTopMargin + optionHeight * dropDownRows + 28; // starts the slide down effect
     var dropdownHeight = dropDownTopMargin + optionHeight * dropDownRows;
     var elHeight = parseInt(this.el.style.height) || 0;
-    var elTop = parseInt(this.el.style.top) || 0;
+    var elPosition = getElementAllPosition(this.el);
+    var elTop = elPosition.top;
     var elBottom = elTop + elHeight;
     var windowHeight = window.innerHeight;
     var windowScroll = window.pageYOffset;
@@ -383,7 +384,7 @@ function slideDown() {
         optionsDom.style.bottom = 'auto';
     }else{
         optionsDom.style.top = 'auto';
-        optionsDom.style.bottom = elHeight + 'px';
+        optionsDom.style.bottom = (elHeight + 2) + 'px';
     }
 
     this.dropdown.style.height = dropdownHeight + 'px';
@@ -416,5 +417,38 @@ function getFloat(el, style) {
 }
 function px(n) { return n + 'px'; }
 
+function getElementAllPosition(_el) {
+    let offset = getElementPosition(_el);
+    let top = offset.top;
+    let left = offset.left;
+    let width = _el.offsetWidth;
+    let height = _el.offsetHeight;
+    let right = left + width;
+    let bottom = top + height;
+    let scrollTop = offset.scrollTop;
+
+    return {
+        top: top,
+        left: left,
+        right: right,
+        bottom: bottom,
+        width: width,
+        height: height,
+        scrollTop: scrollTop
+    }
+}
+
+function getElementPosition(_el) {
+    var pos = {"top":0, "left":0, "scrollTop": 0};
+    if (_el.offsetParent){
+        while (_el.offsetParent){
+            pos.top += _el.offsetTop;
+            pos.left += _el.offsetLeft;
+            pos.scrollTop += _el.scrollTop;
+            _el = _el.offsetParent;
+        }
+    }
+    return {left:pos.left, top:pos.top, scrollTop: pos.scrollTop};
+}
 
 export default ComboBox;
