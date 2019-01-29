@@ -88,12 +88,12 @@
         {
             name: 'SZDWDM',
             caption: 'SZDWDM',
-            xtype: "text"
+            xtype: "readonly"
         },
         {
             name: 'CZRQ',
             caption: '操作日期',
-            xtype: "datetime"
+            xtype: "date-ym"
         },
         {
             name: 'WID',

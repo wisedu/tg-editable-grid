@@ -91,6 +91,8 @@ export default class TG_EDITABLE_GRID {
                         break;
                     case "switcher":
                         newField.render = "switcher"
+                    default: 
+                        newField.editor = 'readOnly'
                 }
             }
             newSchema.push(newField);
