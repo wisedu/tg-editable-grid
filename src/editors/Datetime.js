@@ -21,9 +21,17 @@ var Date = Textfield.extend('Datetime', {
     },
     showEditor: function() {
         let that = this;
+        let format = this.column.schema.format || '';
+        format = format.replace('yyyy', 'Y').replace('MM', 'm').replace('dd', 'd').replace('HH', 'H').replace('mm', 'i').replace('ss', 'S');
+        let enableTime = false;
+        if(/H|i|S/.test(format)){
+            enableTime = true;
+        }
         prototype.showEditor.call(this);
         setTimeout(function(){
             calendar = flatpickr(that.input, {
+                "enableTime": enableTime,
+                "dateFormat": format,
                 "locale": {
                     weekdays: {
                         shorthand: ["日", "一", "二", "三", "四", "五", "六"],
