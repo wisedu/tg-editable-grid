@@ -223,10 +223,13 @@ export default class TG_EDITABLE_GRID {
                 let code_name = column.schema.name.replace(this.displayFieldFormat, "");
                 emptyData[code_name] = "";
             }
-        })
+        });
         let newData = data.map(item => {
             return Object.assign({}, emptyData, item);
         });
+
+        //当删除行时，清空缓存，避免在调用that.grid.getRenderedData();方法时报错
+        this.grid.renderer.reset();
 
         this.grid.setData({data: newData});
         this.resetWidth();
