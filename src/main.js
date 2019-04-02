@@ -75,23 +75,24 @@ export default class TG_EDITABLE_GRID {
                 newField.editor = newField.xtype;
                 switch (newField.xtype) {
                     case "select":
-                        newField.editor = "comboBox"
-                        newField.loaddata = that.onEditorLoadData
+                        newField.editor = "comboBox";
+                        newField.loaddata = that.onEditorLoadData;
                         break;
                     case "tree":
-                        newField.loaddata = that.onEditorLoadData
+                        newField.loaddata = that.onEditorLoadData;
                         break;
                     case "text":
-                        newField.editor = "text"
+                        newField.editor = "text";
                         break;
+                    case "date":
                     case "date-local":
                     case "date-full":
                     case "date-ym":
-                        newField.editor = "datetime"
+                        newField.editor = "datetime";
                         break;
                     case "switcher":
-                        newField.render = "switcher"
-                    default: 
+                        newField.render = "switcher";
+                    default:
                         newField.editor = 'readOnly'
                 }
             }
