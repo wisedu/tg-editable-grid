@@ -249,7 +249,7 @@ export default class TG_EDITABLE_GRID {
         let cols = this.grid.getColumnCount();
         let rowheaderWidth = 40;//this.grid.behavior.getColumnWidth(-2);//初始化时宽度默认是100
 
-        if (this.grid.properties.columnAutosizing === true) {
+        if (this.grid.properties.columnAutosizing === true || this.grid.div.parentNode.getAttribute('column-auto-sizing') === 'true') {
             let sumWidth = 0;
             for (let index = 0; index < cols; index++) {
                 let width = this.grid.behavior.getColumnWidth(index);
