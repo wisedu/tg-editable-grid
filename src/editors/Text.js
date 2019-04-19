@@ -1,7 +1,7 @@
 'use strict';
 
-import Textfield from 'fin-hypergrid/src/cellEditors/Textfield';
-var Localization = require('fin-hypergrid/src/lib/Localization');
+import Textfield from 'bh-fin-hypergrid/src/cellEditors/Textfield';
+var Localization = require('bh-fin-hypergrid/src/lib/Localization');
 
 /**
  * As of spring 2016:
@@ -31,5 +31,8 @@ var Text = Textfield.extend('Text', {
         this.input.setSelectionRange(0, this.input.value.length);
     }
 });
-function px(n) { return n + 'px'; }
+
+function px(n) {
+    return n + 'px';
+}
 export default Text;

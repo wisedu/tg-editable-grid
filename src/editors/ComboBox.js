@@ -4,7 +4,7 @@
 
 /* eslint-env browser */
 // import Popper from 'popper.js/dist/umd/popper.js';
-import Textfield from 'fin-hypergrid/src/cellEditors/Textfield';
+import Textfield from 'bh-fin-hypergrid/src/cellEditors/Textfield';
 var prototype = Textfield.parent('CellEditor').prototype;
 import Queueless from './queueless.js';
 
@@ -42,83 +42,85 @@ var ComboBox = Textfield.extend('ComboBox', {
         // set up a transition end controller
         this.optionsTransition = new Queueless(this.options, this);
 
-        this.menuModesSource = this.column.menuModes || { schemaOptions: true };
+        this.menuModesSource = this.column.menuModes || {
+            schemaOptions: true
+        };
 
         // wire-ups
         this.dropper.addEventListener('mousedown', this.toggleDropDown.bind(this));
-        this.dropdown.addEventListener('mousewheel', function(e) { e.stopPropagation(); });
+        this.dropdown.addEventListener('mousewheel', function(e) {
+            e.stopPropagation();
+        });
         this.dropdown.addEventListener('change', this.insertText.bind(this));
         this.search.addEventListener('input', this.searchText.bind(this));
 
     },
 
     template: [
-'<div class="hypergrid-combobox" title="">',
-'    <input type="text" lang="{{locale}}" style="{{style}}" readonly="readonly">',
-'    <span title="Click for options"></span>',
-'    <div class="hypergrid-combobox-container">',
-'        <input type="text" name="search" lang="{{locale}}" style="{{style}}" autofocus placeholder="请输入关键词" autocomplete="off">',
-'        <select id="dataContainer" size="8" lang="{{locale}}"></select>',
-'    </div>',
-'</div>'
+        '<div class="hypergrid-combobox" title="">',
+        '    <input type="text" lang="{{locale}}" style="{{style}}" readonly="readonly">',
+        '    <span title="Click for options"></span>',
+        '    <div class="hypergrid-combobox-container">',
+        '        <input type="text" name="search" lang="{{locale}}" style="{{style}}" autofocus placeholder="请输入关键词" autocomplete="off">',
+        '        <select id="dataContainer" size="8" lang="{{locale}}"></select>',
+        '    </div>',
+        '</div>'
     ].join('\n'),
 
-    modes: [
-        {
-            name: 'distinctValues',
-            appendOptions: function(optgroup) {
-                // get the distinct column values and sort them
-                var distinct = {},
-                    d = [],
-                    columnName = this.column.name,
-                    formatter = this.column.getFormatter();
+    modes: [{
+        name: 'distinctValues',
+        appendOptions: function(optgroup) {
+            // get the distinct column values and sort them
+            var distinct = {},
+                d = [],
+                columnName = this.column.name,
+                formatter = this.column.getFormatter();
 
-                this.grid.behavior.getData().forEach(function(dataRow) {
-                    var val = formatter(dataRow[columnName]);
-                    distinct[val] = (distinct[val] || 0) + 1;
-                });
+            this.grid.behavior.getData().forEach(function(dataRow) {
+                var val = formatter(dataRow[columnName]);
+                distinct[val] = (distinct[val] || 0) + 1;
+            });
 
-                for (var key in distinct) {
-                    d.push(key);
-                }
-
-                while (optgroup.firstElementChild) {
-                    optgroup.firstElementChild.remove();
-                }
-
-                d.sort().forEach(function(val) {
-                    var option = new Option(val + ' (' + distinct[val] + ')', val);
-                    optgroup.appendChild(option);
-                });
-
-                return d.length;
+            for (var key in distinct) {
+                d.push(key);
             }
-        },{
-            name: 'schemaOptions',
-            appendOptions: function(optgroup) {
-                var distinct = {},
-                    d = [],
-                    columnName = this.column.name,
-                    formatter = this.column.getFormatter();
 
-                while (optgroup.firstElementChild) {
-                    optgroup.firstElementChild.remove();
-                }
-
-                
-                // this.column.schema.options.map(item => {
-                //     d.push(item);
-                // })
-
-                // d.sort().forEach(function(val) {
-                //     var option = new Option(val, val);
-                //     optgroup.appendChild(option);
-                // });
-
-                return d.length;
+            while (optgroup.firstElementChild) {
+                optgroup.firstElementChild.remove();
             }
+
+            d.sort().forEach(function(val) {
+                var option = new Option(val + ' (' + distinct[val] + ')', val);
+                optgroup.appendChild(option);
+            });
+
+            return d.length;
         }
-    ],
+    }, {
+        name: 'schemaOptions',
+        appendOptions: function(optgroup) {
+            var distinct = {},
+                d = [],
+                columnName = this.column.name,
+                formatter = this.column.getFormatter();
+
+            while (optgroup.firstElementChild) {
+                optgroup.firstElementChild.remove();
+            }
+
+
+            // this.column.schema.options.map(item => {
+            //     d.push(item);
+            // })
+
+            // d.sort().forEach(function(val) {
+            //     var option = new Option(val, val);
+            //     optgroup.appendChild(option);
+            // });
+
+            return d.length;
+        }
+    }],
 
     showEditor: function() {
         // set the initial state of the mode toggles
@@ -174,7 +176,7 @@ var ComboBox = Textfield.extend('ComboBox', {
     stopEditing: function(feedback) {
         if (this.input.value !== this.initialValue) {
             let selectValue = "";
-            for (let i = 0; i < this.dropdown.options.length; i++){
+            for (let i = 0; i < this.dropdown.options.length; i++) {
                 if (this.dropdown.options[i].text === this.input.value) {
                     selectValue = this.dropdown.options[i].value;
                 }
@@ -197,10 +199,41 @@ var ComboBox = Textfield.extend('ComboBox', {
         this.setEditorValue(this.initialValue);
         this.hideEditor();
         this.grid.cellEditor = null;
-        this.el.remove();
+        if (this.checkIsIe9() || this.checkIsIe10() || this.checkIsIe11()) {
+            this.el.removeNode(true);
+        } else {
+            this.el.remove();
+        }
         this.grid.takeFocus();
 
         return true;
+    },
+    checkIsIe9: function() {
+        var isIe9 = false;
+        var browser = navigator.appName;
+        var b_version = navigator.appVersion;
+        var version = b_version.split(';');
+        var trim_Version = version[1].replace(/[ ]/g, '');
+        if (browser === 'Microsoft Internet Explorer' && trim_Version === 'MSIE9.0') {
+            isIe9 = true;
+        }
+        return isIe9;
+    },
+    checkIsIe10: function() {
+        var isIe10 = false;
+        var browser = navigator.appName;
+        var b_version = navigator.appVersion;
+        var version = b_version.split(';');
+        var trim_Version = version[1].replace(/[ ]/g, '');
+        if (browser === 'Microsoft Internet Explorer' && (trim_Version === 'MSIE10.0')) {
+            isIe10 = true;
+        }
+        return isIe10;
+    },
+
+    checkIsIe11: function() {
+        var isIe11 = navigator.userAgent.toLowerCase().match(/rv:([\d.]+)\) like gecko/);
+        return isIe11;
     },
     toggleDropDown: function() {
         let that = this;
@@ -218,16 +251,20 @@ var ComboBox = Textfield.extend('ComboBox', {
         // });
 
         while (optgroup.firstElementChild) {
+            // if (that.checkIsIe9() || that.checkIsIe10() || that.checkIsIe11()) {
+            //     optgroup.firstElementChild.removeNode(true);
+            // } else {
             optgroup.firstElementChild.remove();
+            // }
         }
 
-        function callback(datas){
+        function callback(datas) {
             datas.map(item => {
                 var option;
                 if (typeof(item) === "string") {
                     option = new Option(item, item);
                 } else {
-                    option = new Option(item.label||item.text, item.value);
+                    option = new Option(item.label || item.text, item.value);
                 }
                 optgroup.appendChild(option);
             })
@@ -236,7 +273,7 @@ var ComboBox = Textfield.extend('ComboBox', {
                 stateToActionMap[state].call(that);
             }
         }
-        
+
         let loaddata = this.column.schema.loaddata;
         this.search.value = '';
         if (loaddata !== undefined) {
@@ -249,27 +286,32 @@ var ComboBox = Textfield.extend('ComboBox', {
     insertText: function(e) {
         // replace the input text with the drop-down text
         this.input.focus();
-        this.input.value = this.dropdown[this.dropdown.selectedIndex].label;
-        
+        this.input.value = this.dropdown[this.dropdown.selectedIndex].text;
+
         this.input.setSelectionRange(0, this.input.value.length);
 
         // close the drop-down
         this.toggleDropDown();
     },
 
-    searchText: function(){
+    searchText: function() {
         let that = this;
         let keyword = this.search.value;
         let loaddata = this.column.schema.loaddata;
         let optgroup = this.dropdown;
         let opts = this.dropdown.querySelectorAll('option');
-        opts.forEach(function(opt){
-            optgroup.removeChild(opt);
-        });
-        function callback(datas){
-            if(keyword !== ''){
-                datas = datas.filter(function(item){
-                    return item.label.indexOf(keyword)>-1;
+        for (var i = 0; i < opts.length; i++) {
+            optgroup.removeChild(opts[i]);
+        }
+        //为了兼容ie
+        // opts.forEach(function(opt) {
+        //     optgroup.removeChild(opt);
+        // });
+
+        function callback(datas) {
+            if (keyword !== '') {
+                datas = datas.filter(function(item) {
+                    return item.label.indexOf(keyword) > -1;
                 });
             }
             datas.map(item => {
@@ -306,7 +348,9 @@ function onModeIconClick(e) {
 function setModeIconAndOptgroup(ctrl, name, state) {
     var style, optgroup, sum, display,
         dropdown = this.dropdown,
-        mode = this.modes.find(function(mode) { return mode.name === name; }), // eslint-disable-line no-shadow
+        mode = this.modes.find(function(mode) {
+            return mode.name === name;
+        }), // eslint-disable-line no-shadow
         selector = mode.selector;
 
     // set icon state (color)
@@ -317,7 +361,9 @@ function setModeIconAndOptgroup(ctrl, name, state) {
         // show progress cursor for (at least) 1/3 second
         style = this.el.style;
         style.cursor = 'progress';
-        setTimeout(function() { style.cursor = null; }, 333);
+        setTimeout(function() {
+            style.cursor = null;
+        }, 333);
 
         if (selector) {
             optgroup = dropdown.querySelector(selector);
@@ -379,10 +425,10 @@ function slideDown() {
 
     var optionsDom = this.options;
     //下拉框向下显示
-    if(elBottom + optionsHeight <= windowHeight + windowScroll){
+    if (elBottom + optionsHeight <= windowHeight + windowScroll) {
         optionsDom.style.top = elHeight + 'px';
         optionsDom.style.bottom = 'auto';
-    }else{
+    } else {
         optionsDom.style.top = 'auto';
         optionsDom.style.bottom = (elHeight + 2) + 'px';
     }
@@ -415,7 +461,10 @@ function slideUp() {
 function getFloat(el, style) {
     return parseFloat(window.getComputedStyle(el)[style]);
 }
-function px(n) { return n + 'px'; }
+
+function px(n) {
+    return n + 'px';
+}
 
 function getElementAllPosition(_el) {
     let offset = getElementPosition(_el);
@@ -439,16 +488,24 @@ function getElementAllPosition(_el) {
 }
 
 function getElementPosition(_el) {
-    var pos = {"top":0, "left":0, "scrollTop": 0};
-    if (_el.offsetParent){
-        while (_el.offsetParent){
+    var pos = {
+        "top": 0,
+        "left": 0,
+        "scrollTop": 0
+    };
+    if (_el.offsetParent) {
+        while (_el.offsetParent) {
             pos.top += _el.offsetTop;
             pos.left += _el.offsetLeft;
             pos.scrollTop += _el.scrollTop;
             _el = _el.offsetParent;
         }
     }
-    return {left:pos.left, top:pos.top, scrollTop: pos.scrollTop};
+    return {
+        left: pos.left,
+        top: pos.top,
+        scrollTop: pos.scrollTop
+    };
 }
 
 export default ComboBox;

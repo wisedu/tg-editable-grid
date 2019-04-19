@@ -1,5 +1,4 @@
-
-import Textfield from 'fin-hypergrid/src/cellEditors/Textfield';
+import Textfield from 'bh-fin-hypergrid/src/cellEditors/Textfield';
 var Time = Textfield.extend('Time', {
     template: [
         '<div class="hypergrid-textfield" style="text-align:right;">',
@@ -21,12 +20,24 @@ var Time = Textfield.extend('Time', {
 
         // Flip AM/PM on 'am' or 'pm' keypresses
         this.input.onkeypress = function(e) {
-            switch(e.key) {
-                case 'a': case 'A': this.meridian.textContent = 'AM'; e.preventDefault(); break;
-                case 'p': case 'P': this.meridian.textContent = 'PM'; e.preventDefault(); break;
-                case 'm': case 'M':
-                if (/[ap]/i.test(this.previousKeypress)) { e.preventDefault(); break; }
-                // fall through to FSM when M NOT preceded by A or P
+            switch (e.key) {
+                case 'a':
+                case 'A':
+                    this.meridian.textContent = 'AM';
+                    e.preventDefault();
+                    break;
+                case 'p':
+                case 'P':
+                    this.meridian.textContent = 'PM';
+                    e.preventDefault();
+                    break;
+                case 'm':
+                case 'M':
+                    if (/[ap]/i.test(this.previousKeypress)) {
+                        e.preventDefault();
+                        break;
+                    }
+                    // fall through to FSM when M NOT preceded by A or P
                 default:
                     // only allow digits and colon (besides A, P, M as above) and specials (ENTER, TAB, ESC)
                     if ('0123456789:'.indexOf(e.key) >= 0 || this.specialKeyups[e.keyCode]) {

@@ -1,4 +1,4 @@
-import Hypergrid from 'fin-hypergrid';
+import Hypergrid from 'bh-fin-hypergrid';
 import ComboBox from "./editors/ComboBox.js";
 import Datetime from "./editors/Datetime.js";
 import Tree from "./editors/Tree.js";
@@ -10,7 +10,7 @@ import wisTable from './wisTableTheme.js';
 import utils from './utils.js';
 
 export default class TG_EDITABLE_GRID {
-    constructor(dom, options){
+    constructor(dom, options) {
         this.displayFieldFormat = options.displayFieldFormat;
         this.readOnly = options.readOnly;
         this.utils = utils;
@@ -43,7 +43,7 @@ export default class TG_EDITABLE_GRID {
 
         this.grid.cellRenderers.add("Checkbox", renderCheckbox);
         this.grid.cellRenderers.add("Borders", renderBorders);
-        
+
         this.grid.properties.renderer = ['SimpleCell', 'Borders'];
         // this.grid.addEventListener('fin-editor-data-change', function(val){
         //     console.log(val, "~~~");
@@ -54,7 +54,7 @@ export default class TG_EDITABLE_GRID {
             //how to set the tooltip....
             var hoverCell = that.grid.hoverCell;
             var renderedData = that.grid.getRenderedData();
-            if(hoverCell.x >= 0){
+            if (hoverCell.x >= 0) {
                 var title = renderedData[hoverCell.y][hoverCell.x];
                 that.grid.setAttribute('title', title);
             }
@@ -121,12 +121,12 @@ export default class TG_EDITABLE_GRID {
             }
         };
 
-        this.grid.canvas.gc.canvas.addEventListener('wheel', function(e){
+        this.grid.canvas.gc.canvas.addEventListener('wheel', function(e) {
             that.grid.cancelEditing();
         })
 
         this.grid.mixIn.call(this.grid.behavior.featureMap.CellClick, {
-            handleClick:function(grid, event) {
+            handleClick: function(grid, event) {
                 var consumed = (event.isDataCell || event.isTreeColumn) && (
                     this.openLink(grid, event) !== undefined ||
                     grid.cellClicked(event)
@@ -134,23 +134,25 @@ export default class TG_EDITABLE_GRID {
 
                 if (event.columnProperties.render === "switcher") {
                     event.value = !event.value;
-                    grid.canvas.dispatchEvent(new CustomEvent('tg-checkbox-change', {"detail":{
-                        name:event.columnProperties.field,
-                        value:event.dataRow[event.columnProperties.field],
-                        dataRow:event.dataRow,
-                        schema:event.columnProperties.columns,
-                        dataCell:event.dataCell
-                    }}));
+                    grid.canvas.dispatchEvent(new CustomEvent('tg-checkbox-change', {
+                        "detail": {
+                            name: event.columnProperties.field,
+                            value: event.dataRow[event.columnProperties.field],
+                            dataRow: event.dataRow,
+                            schema: event.columnProperties.columns,
+                            dataCell: event.dataCell
+                        }
+                    }));
                 }
-        
+
                 if (!consumed && this.next) {
                     this.next.handleClick(grid, event);
-                }        
+                }
             }
         });
 
         this.grid.mixIn.call(this.grid.behavior.featureMap.OnHover, {
-            handleMouseMove:function(grid, event) {
+            handleMouseMove: function(grid, event) {
 
                 if (event.isDataCell) {
                     this.cursor = 'cell';
@@ -158,12 +160,15 @@ export default class TG_EDITABLE_GRID {
                     this.cursor = null;
                 }
 
-                if (event.properties.custom && event.properties.custom.error !== undefined){
+                if (event.properties.custom && event.properties.custom.error !== undefined) {
                     for (const key in event.properties.custom.error) {
                         const element = event.properties.custom.error[key];
-                        if (key === String(event.dataCell.y)){
-                            if (element[event.column.name] !== undefined){
-                                let x = event.bounds.x, y = event.bounds.y, w = event.bounds.width, h = event.bounds.height;
+                        if (key === String(event.dataCell.y)) {
+                            if (element[event.column.name] !== undefined) {
+                                let x = event.bounds.x,
+                                    y = event.bounds.y,
+                                    w = event.bounds.width,
+                                    h = event.bounds.height;
                                 let message = element[event.column.name].message;
                                 let gc = grid.canvas.gc;
                                 gc.font = '14px Helvetica,"PingFang SC","Microsoft YaHei"';
@@ -188,7 +193,7 @@ export default class TG_EDITABLE_GRID {
                                 gc.font = '14px Helvetica,"PingFang SC","Microsoft YaHei"';
                                 gc.fillStyle = '#fff';
                                 gc.fillText(message, tipPointer.left_x + 6, tipPointer.left_y + 6);
-                                
+
                                 // gc.beginPath();
                                 // gc.moveTo(x + w - 6 - 8 - 6, y + 6 - 10 + 6);
                                 // gc.lineTo(x + w - 6 - 8, y + 6 - 10);
@@ -232,7 +237,9 @@ export default class TG_EDITABLE_GRID {
         //当删除行时，清空缓存，避免在调用that.grid.getRenderedData();方法时报错
         this.grid.renderer.reset();
 
-        this.grid.setData({data: newData});
+        this.grid.setData({
+            data: newData
+        });
         this.resetWidth();
     }
 
@@ -247,7 +254,7 @@ export default class TG_EDITABLE_GRID {
     resetWidth() {
         this.grid.canvas.resize();
         let cols = this.grid.getColumnCount();
-        let rowheaderWidth = 40;//this.grid.behavior.getColumnWidth(-2);//初始化时宽度默认是100
+        let rowheaderWidth = 40; //this.grid.behavior.getColumnWidth(-2);//初始化时宽度默认是100
 
         if (this.grid.properties.columnAutosizing === true || this.grid.div.parentNode.getAttribute('column-auto-sizing') === 'true') {
             let sumWidth = 0;
@@ -255,7 +262,7 @@ export default class TG_EDITABLE_GRID {
                 let width = this.grid.behavior.getColumnWidth(index);
                 sumWidth += width;
             }
-            
+
             let lastWidth = this.grid.behavior.getColumnWidth(cols - 1);
             let newLastWidth = lastWidth + this.grid.getBounds().width - sumWidth - rowheaderWidth;
             this.grid.behavior.setColumnWidth(cols - 1, newLastWidth);

@@ -1,11 +1,11 @@
 'use strict';
 import flatpickr from "flatpickr";
-import Textfield from 'fin-hypergrid/src/cellEditors/Textfield';
+import Textfield from 'bh-fin-hypergrid/src/cellEditors/Textfield';
 var prototype = Textfield.parent('CellEditor').prototype;
 
 let calendar;
 var Date = Textfield.extend('Datetime', {
-    template:  `<div class="hypergrid-combobox" title="">
+    template: `<div class="hypergrid-combobox" title="">
     <input type="text" lang="{{locale}}" style="{{style}}" readonly>
     <span title="Click for datepicker"></span>
 </div>`,
@@ -24,11 +24,11 @@ var Date = Textfield.extend('Datetime', {
         let format = this.column.schema.format || '';
         format = format.replace('yyyy', 'Y').replace('MM', 'm').replace('dd', 'd').replace('HH', 'H').replace('mm', 'i').replace('ss', 'S');
         let enableTime = false;
-        if(/H|i|S/.test(format)){
+        if (/H|i|S/.test(format)) {
             enableTime = true;
         }
         prototype.showEditor.call(this);
-        setTimeout(function(){
+        setTimeout(function() {
             calendar = flatpickr(that.input, {
                 "enableTime": enableTime,
                 "dateFormat": format,
@@ -56,7 +56,7 @@ var Date = Textfield.extend('Datetime', {
                     event.stopPropagation();
                 }
             });
-        },100)
+        }, 100)
     },
     hideEditor: function() {
         // this is where you would persist this.menuModes
@@ -75,6 +75,9 @@ var Date = Textfield.extend('Datetime', {
         calendar.toggle();
     }
 });
-function px(n) { return n + 'px'; }
+
+function px(n) {
+    return n + 'px';
+}
 
 export default Date;

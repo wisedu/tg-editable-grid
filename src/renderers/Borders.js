@@ -1,15 +1,19 @@
-import CellRenderer from 'fin-hypergrid/src/cellRenderers/CellRenderer';
+import CellRenderer from 'bh-fin-hypergrid/src/cellRenderers/CellRenderer';
 
 let Borders = CellRenderer.extend('Borders', {
-    paint: function (gc, config) {
-        let bounds = config.bounds, x = bounds.x, y = bounds.y, w = bounds.width, h = bounds.height;
+    paint: function(gc, config) {
+        let bounds = config.bounds,
+            x = bounds.x,
+            y = bounds.y,
+            w = bounds.width,
+            h = bounds.height;
         let rowIndex = config.dataCell.y;
         if (config.gridCell.x === -2 && config.gridCell.y === 0) {
             let bgcolor = 'rgb(250, 250, 250)';
             gc.cache.fillStyle = bgcolor;
             gc.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
         }
-        if (config.custom === undefined || config.custom.error === undefined){
+        if (config.custom === undefined || config.custom.error === undefined) {
             return;
         }
         let row = config.custom.error[rowIndex] || {};

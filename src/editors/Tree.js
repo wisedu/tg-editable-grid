@@ -3,7 +3,7 @@ import Popper from 'popper.js/dist/umd/popper.js';
 import Queueless from './queueless.js';
 import InspireTree from 'inspire-tree';
 import InspireTreeDOM from 'inspire-tree-dom';
-import Textfield from 'fin-hypergrid/src/cellEditors/Textfield';
+import Textfield from 'bh-fin-hypergrid/src/cellEditors/Textfield';
 var prototype = Textfield.parent('CellEditor').prototype;
 
 var stateToActionMap = {
@@ -13,13 +13,14 @@ var stateToActionMap = {
 
 var Date = Textfield.extend('Tree', {
 
-    template:['<div class="hypergrid-combobox" title="">',
-    '    <input type="text" lang="{{locale}}" style="{{style}}">',
-    '    <span title="Click for options"></span>',
-    '    <div class="hypergrid-combobox-container">',
-    '       <div id="dataContainer"></div>',
-    '    </div>',
-    '</div>'].join('\n'),
+    template: ['<div class="hypergrid-combobox" title="">',
+        '    <input type="text" lang="{{locale}}" style="{{style}}">',
+        '    <span title="Click for options"></span>',
+        '    <div class="hypergrid-combobox-container">',
+        '       <div id="dataContainer"></div>',
+        '    </div>',
+        '</div>'
+    ].join('\n'),
 
     initialize: function(grid) {
         var el = this.el;
@@ -36,9 +37,19 @@ var Date = Textfield.extend('Tree', {
             var lastCharPlusOne = this.getEditorValue().length;
             this.input.setSelectionRange(0, lastCharPlusOne);
         };
-
+        // if (checkIsIe9()) {
+        //     // this.input.attachEvent("onmousedown", this.slideUpBound = slideUp.bind(this));
+        //     this.dropper.attachEvent('onmousedown', this.toggleDropDown.bind(this));
+        //     this.dropdown.attachEvent('onmousewheel', function(e) {
+        //         window.event.returnValue = fale;
+        //         return false;
+        //     });
+        // } else {
         this.dropper.addEventListener('mousedown', this.toggleDropDown.bind(this));
-        this.dropdown.addEventListener('mousewheel', function(e) { e.stopPropagation(); });
+        this.dropdown.addEventListener('mousewheel', function(e) {
+            e.stopPropagation();
+        });
+        // }
     },
     showEditor: function() {
         prototype.showEditor.call(this);
@@ -64,20 +75,20 @@ var Date = Textfield.extend('Tree', {
 
         new Popper(this.input, this.dropdown.parentElement, {
             modifiers: {
-                computeStyle:{
+                computeStyle: {
                     gpuAcceleration: false
                 },
-                preventOverflow :{
+                preventOverflow: {
                     boundariesElement: 'window'
                 }
             }
         });
 
-        function callback(datas){
+        function callback(datas) {
             var tree = new InspireTree({
                 data: datas
             });
-    
+
             new InspireTreeDOM(tree, {
                 target: that.dropdown
             });
@@ -100,6 +111,7 @@ var Date = Textfield.extend('Tree', {
         }
     },
     insertText: function(node, isLoadEvent) {
+        // console.log('insertText~~~~~~~~~~')
         this.node = node;
         this.input.focus();
         this.input.value = node.text;
@@ -118,7 +130,10 @@ var Date = Textfield.extend('Tree', {
         style.height = px(cellBounds.height - 20);
     },
 });
-function px(n) { return n + 'px'; }
+
+function px(n) {
+    return n + 'px';
+}
 
 function slideDown() {
     // preserve the text box's current text selection, which is about to be lost
@@ -136,10 +151,16 @@ function slideDown() {
         dropDownRows = 8,
         optionHeight = 25; //Math.ceil((OlLi.length && getFloat(OlLi[0], 'height') || 13.1875) * 2) / 2 + 1;
     this.options.style.height = dropDownTopMargin + optionHeight * dropDownRows + 2 + 'px'; // starts the slide down effect
-    this.dropdown.style.height = dropDownTopMargin + optionHeight * dropDownRows  + 'px';
+    this.dropdown.style.height = dropDownTopMargin + optionHeight * dropDownRows + 'px';
 
     // while in drop-down, listen for clicks in text box which means abprt
+    // if (checkIsIe9()) {
+    //     this.input.attachEvent("onmousedown", this.slideUpBound = slideUp.bind(this));
+    // } else {
     this.input.addEventListener('mousedown', this.slideUpBound = slideUp.bind(this));
+    // }
+
+
 
     // wait for transition to end
     this.optionsTransition.begin();
@@ -147,7 +168,13 @@ function slideDown() {
 
 function slideUp() {
     // stop listening to input clicks
+    // if (checkIsIe9()) {
+    //     this.input.detachEvent('onmousedown', this.slideUpBound);
+    // this.input.attachEvent("onmousedown", this.slideUpBound = slideUp.bind(this));
+    // } else {
     this.input.removeEventListener('mousedown', this.slideUpBound);
+    // }
+
 
     // start the slide up effect
     this.options.style.height = 0;
@@ -162,4 +189,15 @@ function getFloat(el, style) {
     return parseFloat(window.getComputedStyle(el)[style]);
 }
 
+function checkIsIe9() {
+    var isIe9 = false;
+    var browser = navigator.appName;
+    var b_version = navigator.appVersion;
+    var version = b_version.split(';');
+    var trim_Version = version[1].replace(/[ ]/g, '');
+    if (browser === 'Microsoft Internet Explorer' && trim_Version === 'MSIE9.0') {
+        isIe9 = true;
+    }
+    return isIe9;
+}
 export default Date;
