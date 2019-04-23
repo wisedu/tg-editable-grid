@@ -28,7 +28,7 @@ var stateToActionMap = {
  */
 var ComboBox = Textfield.extend('ComboBox', {
 
-    initialize: function() {
+    initialize: function () {
         var el = this.el;
 
         this.input = el.querySelector('input');
@@ -43,12 +43,12 @@ var ComboBox = Textfield.extend('ComboBox', {
         this.optionsTransition = new Queueless(this.options, this);
 
         this.menuModesSource = this.column.menuModes || {
-            schemaOptions: true
-        };
+                schemaOptions: true
+            };
 
         // wire-ups
         this.dropper.addEventListener('mousedown', this.toggleDropDown.bind(this));
-        this.dropdown.addEventListener('mousewheel', function(e) {
+        this.dropdown.addEventListener('mousewheel', function (e) {
             e.stopPropagation();
         });
         this.dropdown.addEventListener('change', this.insertText.bind(this));
@@ -69,14 +69,14 @@ var ComboBox = Textfield.extend('ComboBox', {
 
     modes: [{
         name: 'distinctValues',
-        appendOptions: function(optgroup) {
+        appendOptions: function (optgroup) {
             // get the distinct column values and sort them
             var distinct = {},
                 d = [],
                 columnName = this.column.name,
                 formatter = this.column.getFormatter();
 
-            this.grid.behavior.getData().forEach(function(dataRow) {
+            this.grid.behavior.getData().forEach(function (dataRow) {
                 var val = formatter(dataRow[columnName]);
                 distinct[val] = (distinct[val] || 0) + 1;
             });
@@ -86,28 +86,59 @@ var ComboBox = Textfield.extend('ComboBox', {
             }
 
             while (optgroup.firstElementChild) {
-                optgroup.firstElementChild.remove();
+                if (modes.isIE() || modes.isIE11()) {
+                    optgroup.firstElementChild.removeNode(true);
+                } else {
+                    optgroup.firstElementChild.remove();
+                }
             }
-
-            d.sort().forEach(function(val) {
+            d.sort();
+            d.forEach(function (val) {
                 var option = new Option(val + ' (' + distinct[val] + ')', val);
                 optgroup.appendChild(option);
             });
 
             return d.length;
+        },
+        /**
+         * 判断是否是IE
+         * @returns boolean
+         */
+        isIE: function () {
+            if (!!window.ActiveXobject || "ActiveXObject" in window) {
+                return true;
+            } else {
+                return false;
+            }
+        },
+        /**
+         * 判断是否是IE11
+         * @returns boolean
+         */
+        isIE11: function () {
+            if ((/Trident\/7\./).test(navigator.userAgent)) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }, {
         name: 'schemaOptions',
-        appendOptions: function(optgroup) {
+        appendOptions: function (optgroup) {
             var distinct = {},
                 d = [],
                 columnName = this.column.name,
                 formatter = this.column.getFormatter();
 
             while (optgroup.firstElementChild) {
-                optgroup.firstElementChild.remove();
-            }
+                // 判断是否是IE
+                if (modes.isIE() || modes.isIE11()) {
+                    optgroup.firstElementChild.removeNode(true);
+                } else {
+                    optgroup.firstElementChild.remove();
+                }
 
+            }
 
             // this.column.schema.options.map(item => {
             //     d.push(item);
@@ -122,14 +153,14 @@ var ComboBox = Textfield.extend('ComboBox', {
         }
     }],
 
-    showEditor: function() {
+    showEditor: function () {
         // set the initial state of the mode toggles
         if (!this.built) {
             var menuModesSource = this.menuModesSource,
                 menuModes = this.menuModes = {};
 
             // build the proxy
-            this.modes.forEach(function(mode) {
+            this.modes.forEach(function (mode) {
                 var modeName = mode.name;
                 if (modeName in menuModesSource) {
                     menuModes[modeName] = menuModesSource[modeName];
@@ -141,7 +172,7 @@ var ComboBox = Textfield.extend('ComboBox', {
             //     this.controls.addEventListener('click', onModeIconClick.bind(this));
             // }
 
-            this.modes.forEach(function(mode) {
+            this.modes.forEach(function (mode) {
                 // create a toggle
                 var toggle = document.createElement('span');
                 if (this.controllable) {
@@ -173,7 +204,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         prototype.showEditor.call(this);
     },
 
-    stopEditing: function(feedback) {
+    stopEditing: function (feedback) {
         if (this.input.value !== this.initialValue) {
             let selectValue = "";
             for (let i = 0; i < this.dropdown.options.length; i++) {
@@ -185,7 +216,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         }
         prototype.stopEditing.call(this, feedback);
     },
-    setBounds: function(cellBounds) {
+    setBounds: function (cellBounds) {
         var style = this.el.style;
 
         style.left = px(cellBounds.x);
@@ -194,7 +225,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         style.height = px(cellBounds.height - 20);
     },
 
-    cancelEditing: function() {
+    cancelEditing: function () {
         this.input.value = this.initialValue;
         this.setEditorValue(this.initialValue);
         this.hideEditor();
@@ -208,7 +239,7 @@ var ComboBox = Textfield.extend('ComboBox', {
 
         return true;
     },
-    checkIsIe9: function() {
+    checkIsIe9: function () {
         var isIe9 = false;
         var browser = navigator.appName;
         var b_version = navigator.appVersion;
@@ -219,7 +250,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         }
         return isIe9;
     },
-    checkIsIe10: function() {
+    checkIsIe10: function () {
         var isIe10 = false;
         var browser = navigator.appName;
         var b_version = navigator.appVersion;
@@ -231,11 +262,11 @@ var ComboBox = Textfield.extend('ComboBox', {
         return isIe10;
     },
 
-    checkIsIe11: function() {
+    checkIsIe11: function () {
         var isIe11 = navigator.userAgent.toLowerCase().match(/rv:([\d.]+)\) like gecko/);
         return isIe11;
     },
-    toggleDropDown: function() {
+    toggleDropDown: function () {
         let that = this;
         let optgroup = this.dropdown;
 
@@ -251,11 +282,36 @@ var ComboBox = Textfield.extend('ComboBox', {
         // });
 
         while (optgroup.firstElementChild) {
-            // if (that.checkIsIe9() || that.checkIsIe10() || that.checkIsIe11()) {
-            //     optgroup.firstElementChild.removeNode(true);
-            // } else {
-            optgroup.firstElementChild.remove();
-            // }
+            // 判断是否是IE
+            if (isIE() || isIE11()) {
+                optgroup.firstElementChild.removeNode(true);
+            } else {
+                optgroup.firstElementChild.remove();
+            }
+        }
+
+        /**
+         * 判断是否是IE
+         * @returns boolean
+         */
+        function isIE() {
+            if (!!window.ActiveXobject || "ActiveXObject" in window) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /**
+         * 判断是否是IE11
+         * @returns boolean
+         */
+        function isIE11() {
+            if ((/Trident\/7\./).test(navigator.userAgent)) {
+                return true;
+            } else {
+                return false;
+            }
         }
 
         function callback(datas) {
@@ -283,7 +339,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         }
     },
 
-    insertText: function(e) {
+    insertText: function (e) {
         // replace the input text with the drop-down text
         this.input.focus();
         this.input.value = this.dropdown[this.dropdown.selectedIndex].text;
@@ -294,7 +350,7 @@ var ComboBox = Textfield.extend('ComboBox', {
         this.toggleDropDown();
     },
 
-    searchText: function() {
+    searchText: function () {
         let that = this;
         let keyword = this.search.value;
         let loaddata = this.column.schema.loaddata;
@@ -310,7 +366,7 @@ var ComboBox = Textfield.extend('ComboBox', {
 
         function callback(datas) {
             if (keyword !== '') {
-                datas = datas.filter(function(item) {
+                datas = datas.filter(function (item) {
                     return item.label.indexOf(keyword) > -1;
                 });
             }
@@ -324,6 +380,7 @@ var ComboBox = Textfield.extend('ComboBox', {
                 optgroup.appendChild(option);
             });
         }
+
         loaddata(this.column.schema, keyword, callback);
     }
 });
@@ -333,7 +390,7 @@ function onModeIconClick(e) {
 
     if (ctrl.tagName === 'SPAN') {
         // extra ct the mode name from the toggle control's class name
-        var modeClassName = Array.prototype.find.call(ctrl.classList, function(className) {
+        var modeClassName = Array.prototype.find.call(ctrl.classList, function (className) {
                 return className.indexOf(TOGGLE_MODE_PREFIX) === 0;
             }),
             modeName = modeClassName.substr(TOGGLE_MODE_PREFIX.length);
@@ -348,7 +405,7 @@ function onModeIconClick(e) {
 function setModeIconAndOptgroup(ctrl, name, state) {
     var style, optgroup, sum, display,
         dropdown = this.dropdown,
-        mode = this.modes.find(function(mode) {
+        mode = this.modes.find(function (mode) {
             return mode.name === name;
         }), // eslint-disable-line no-shadow
         selector = mode.selector;
@@ -361,7 +418,7 @@ function setModeIconAndOptgroup(ctrl, name, state) {
         // show progress cursor for (at least) 1/3 second
         style = this.el.style;
         style.cursor = 'progress';
-        setTimeout(function() {
+        setTimeout(function () {
             style.cursor = null;
         }, 333);
 
