@@ -154,9 +154,7 @@ var ComboBox = Textfield.extend('ComboBox', {
     }],
 
     showEditor: function () {
-        if(this.input.value === 'null'){
-            this.input.value = '';
-        }
+        if(this.input.value === 'null' || this.input.value === 'undefined') this.input.value = '';
 
         // set the initial state of the mode toggles
         if (!this.built) {

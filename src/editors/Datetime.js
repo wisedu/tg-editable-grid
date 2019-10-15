@@ -21,6 +21,7 @@ var Date = Textfield.extend('Datetime', {
     },
     showEditor: function() {
         let that = this;
+        if(this.input.value === 'null' || this.input.value === 'undefined') this.input.value = '';
         let format = this.column.schema.format || '';
         format = format.replace('yyyy', 'Y').replace('MM', 'm').replace('dd', 'd').replace('HH', 'H').replace('mm', 'i').replace('ss', 'S');
         let enableTime = false;

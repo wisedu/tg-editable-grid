@@ -29,6 +29,9 @@ var Text = Textfield.extend('Text', {
     },
     selectAll: function() {
         this.input.setSelectionRange(0, this.input.value.length);
+    },
+    showEditor: function () {
+        if(this.input.value === 'null' || this.input.value === 'undefined') this.input.value = '';
     }
 });
 
