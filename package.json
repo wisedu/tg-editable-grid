@@ -26,15 +26,15 @@
     "@babel/plugin-external-helpers": "^7.0.0",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/polyfill": "^7.0.0",
-    "babel-loader": "^8.0.2",
+    "babel-loader": "^8.3.0",
     "clean-webpack-plugin": "^0.1.19",
-    "mini-css-extract-plugin": "^0.4.3",
+    "mini-css-extract-plugin": "^2.7.2",
     "rollup": "^0.64.1",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.1.8",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-uglify": "^6.0.0",
-    "webpack": "^4.19.1",
-    "webpack-cli": "^3.1.0"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   }
 }
